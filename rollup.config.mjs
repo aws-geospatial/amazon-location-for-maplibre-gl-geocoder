@@ -27,7 +27,7 @@ export default {
             plugins: [
                 getBabelOutputPlugin({
                     minified: true,
-                    moduleId: "amazonLocationAuthHelper",
+                    moduleId: "amazonLocationMaplibreGeocoder",
                     presets: [["@babel/env", { modules: "umd" }]],
                 }),
             ],
