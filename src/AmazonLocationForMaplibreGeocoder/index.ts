@@ -43,7 +43,7 @@ export class AmazonLocationMaplibreGeocoder {
   private filterCountries: CountriesEnum[] = [];
   private filterCategories: CategoriesEnum[] = [];
   private filterBBox: BoundingBox = null;
-  private biasPosition: AmazonLocationPosition = null;
+  private biasPosition: Position = null;
   private language = "en";
   private center = [-77.03674, 38.891602];
 
@@ -95,14 +95,14 @@ export class AmazonLocationMaplibreGeocoder {
             };
           }
 
-          if (config.bbox != []) {
+          if (config.bbox.length > 0) {
             params = {
               ...params,
               FilterBBox: config.bbox,
             };
           }
 
-          if (config.proximity != { }) {
+          if (config.proximity.longitude != undefined && config.proximity.latitude != undefined) {
             params = {
               ...params,
               BiasPosition: [config.proximity.longitude, config.proximity.latitude]
@@ -238,14 +238,14 @@ export class AmazonLocationMaplibreGeocoder {
             };
           }
 
-          if (config.bbox != []) {
+          if (config.bbox.length > 0) {
             params = {
               ...params,
               FilterBBox: config.bbox,
             };
           }
 
-          if (config.proximity != { }) {
+          if (config.proximity.longitude != undefined && config.proximity.latitude != undefined) {
             params = {
               ...params,
               BiasPosition: [config.proximity.longitude, config.proximity.latitude]
@@ -493,7 +493,7 @@ export class AmazonLocationMaplibreGeocoder {
     }
   }
 
-  public setBiasPosition(position: AmazonLocationPosition): void {
+  public setBiasPosition(position: Position): void {
     this.filterBBox = null;
     this.biasPosition = position;
     this.updateMaplibreGeocoderBiasPosition(position);

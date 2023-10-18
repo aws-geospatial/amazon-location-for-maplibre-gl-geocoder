@@ -55,13 +55,10 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   );
 
   it.each([[undefined, undefined, undefined, undefined],
-      [CategoriesEnum.CoffeeShop,CountriesEnum["United States"], {longitudeSW: 0,
-          latitudeSW: 0,
-          longitudeNE: 0,
-          latitudeNE: 0}, undefined],
-      [[`${CategoriesEnum.CoffeeShop},${CategoriesEnum.Bar}`], [`${CountriesEnum["United States"]},${CountriesEnum.Mexico}`], undefined, [0, 0]]])
+      [CategoriesEnum.CoffeeShop,CountriesEnum["United States"], [0, 0, 0, 0], undefined],
+      [[`${CategoriesEnum.CoffeeShop},${CategoriesEnum.Bar}`], [`${CountriesEnum["United States"]},${CountriesEnum.Mexico}`], undefined, {longitude: 0, latitude: 0}]])
   ("forwardGeocode returns some values in the expected format.",
-      async (categories? : CategoriesEnum[], countries? : CountriesEnum[], bbox?: BoundingBox, biasPosition?: Position) => {
+      async (categories, countries, bbox, biasPosition) => {
       const config = {
           query: "a map query",
           language: "en",
@@ -143,7 +140,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
             const forwardGeocoderApi = await amazonLocationMaplibreGeocoder.createAmazonLocationForwardGeocodeApi();
             try {
                 await forwardGeocoderApi.forwardGeocode(config);
-            } catch (e : Error) {
+            } catch (e) {
                 expect(e.message).toEqual(TEST_ERROR_MESSAGE);
             }
             expect(clientMock.send).toHaveBeenCalled();
@@ -231,20 +228,17 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
             const reverseGeocoderApi = await amazonLocationMaplibreGeocoder.createAmazonLocationReverseGeocodeApi();
             try {
                 await reverseGeocoderApi.reverseGeocode(config);
-            } catch (e : Error) {
+            } catch (e) {
                 expect(e.message).toEqual(TEST_ERROR_MESSAGE);
             }
             expect(clientMock.send).toHaveBeenCalled();
         });
 
   it.each([[undefined, undefined, undefined, undefined],
-      [CategoriesEnum.CoffeeShop,CountriesEnum["United States"], {longitudeSW: 0,
-          latitudeSW: 0,
-          longitudeNE: 0,
-          latitudeNE: 0}, undefined],
-      [[`${CategoriesEnum.CoffeeShop},${CategoriesEnum.Bar}`], [`${CountriesEnum["United States"]},${CountriesEnum.Mexico}`], undefined, [0, 0]]])
+      [CategoriesEnum.CoffeeShop,CountriesEnum["United States"], [0, 0, 0, 0], undefined],
+      [[`${CategoriesEnum.CoffeeShop},${CategoriesEnum.Bar}`], [`${CountriesEnum["United States"]},${CountriesEnum.Mexico}`], undefined, {longitude: 0, latitude: 0}]])
   ("getSuggestions API MUST respond with expected payload.",
-      async (categories? : string , countries? : string, bbox?: BoundingBox, biasPosition?: Position) => {
+      async (categories , countries, bbox, biasPosition) => {
         const config = {
             query: "a map query",
             language: "en",
@@ -316,7 +310,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
             const getSuggestionsApi = await amazonLocationMaplibreGeocoder.createAmazonLocationGetSuggestions();
             try {
                 await getSuggestionsApi.getSuggestions(config);
-            } catch (e : Error) {
+            } catch (e) {
                 expect(e.message).toEqual(TEST_ERROR_MESSAGE);
             }
             expect(clientMock.send).toHaveBeenCalled();
@@ -401,7 +395,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
             const searchForPlaceId = await amazonLocationMaplibreGeocoder.createAmazonLocationSearchPlaceById();
             try {
                 await searchForPlaceId.searchByPlaceId(config);
-            } catch (e : Error) {
+            } catch (e) {
                 expect(e.message).toEqual(TEST_ERROR_MESSAGE);
             }
             expect(clientMock.send).toHaveBeenCalled();
@@ -414,7 +408,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
           latitudeNE: 0}, undefined],
       [[CategoriesEnum.CoffeeShop], [CountriesEnum["United States"]], undefined, [0, 0]]])
   ("I expect that I can get an IControl, MaplibreGeocoder WHEN I call createAmazonLocationGeocoder",
-      async (categories? : CategoriesEnum[], countries? : CountriesEnum[], bbox?: BoundingBox, biasPosition?: Position) => {
+      async (categories, countries , bbox, biasPosition) => {
       (withAPIKey as jest.Mock).mockReturnValueOnce({
           getLocationClientConfig: () => {
               return {

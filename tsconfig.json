@@ -2,11 +2,12 @@
   "compilerOptions": {
     "target": "es2017",
     "moduleResolution": "node",
-    "outDir": "dist"
+    "outDir": "dist",
+    "allowSyntheticDefaultImports": true
   },
   "typedocOptions": {
     "entryPoints": ["./src/index.ts"]
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "node_modules*"]
 }
