@@ -22,9 +22,15 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   const TEST_ERROR_MESSAGE = "This is a test error.";
 
   let clientMock;
-  let sdkAuthHelperMock;
+  let amazonLocationMaplibreGeocoder;
   beforeEach(() => {
       clientMock = new LocationClient();
+      amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
+          mapName: MAP_NAME,
+          placesName: PLACES_NAME,
+          region: REGION,
+          apiKey: API_KEY,
+      });
       (SearchPlaceIndexForTextCommand as jest.Mock).mockClear();
       (SearchPlaceIndexForPositionCommand as jest.Mock).mockClear();
       (SearchPlaceIndexForSuggestionsCommand as jest.Mock).mockClear();
@@ -43,12 +49,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
     "AmazonLocationMaplibreGeocoder should be able to construct an object, " +
       "and createAmazonLocationPlacesSearch should return API for MaplibreGeocoder ",
     async () => {
-        const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-            mapName: MAP_NAME,
-            placesName: PLACES_NAME,
-            region: REGION,
-            apiKey: API_KEY,
-        });
         (withAPIKey as jest.Mock).mockReturnValueOnce([{}]);
       expect(await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch()).toBeDefined();
     },
@@ -75,13 +75,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                   credentials: {someCredentials: "credentials"}
               };
           }});
-      const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-          mapName: MAP_NAME,
-          placesName: PLACES_NAME,
-          region: REGION,
-          apiKey: API_KEY,
-      });
-
           const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send').mockReturnValue(
           {
               Results: [{
@@ -125,12 +118,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                         credentials: {someCredentials: "credentials"}
                     };
                 }});
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
 
             const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send')
                 .mockImplementation(() => {
@@ -163,12 +150,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                   credentials: {someCredentials: "credentials"}
               };
           }});
-      const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-          mapName: MAP_NAME,
-          placesName: PLACES_NAME,
-          region: REGION,
-          apiKey: API_KEY,
-      });
 
       const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send').mockReturnValue(
           {
@@ -213,12 +194,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                         credentials: {someCredentials: "credentials"}
                     };
                 }});
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
 
             const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send')
                 .mockImplementation(() => {
@@ -255,12 +230,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                     credentials: {someCredentials: "credentials"}
                 };
             }});
-        const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-            mapName: MAP_NAME,
-            placesName: PLACES_NAME,
-            region: REGION,
-            apiKey: API_KEY,
-        });
 
         const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send').mockReturnValue(
             {
@@ -295,12 +264,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                         credentials: {someCredentials: "credentials"}
                     };
                 }});
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
 
             const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send')
                 .mockImplementation(() => {
@@ -333,12 +296,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                   credentials: {someCredentials: "credentials"}
               };
           }});
-      const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-          mapName: MAP_NAME,
-          placesName: PLACES_NAME,
-          region: REGION,
-          apiKey: API_KEY,
-      });
 
       const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send').mockReturnValue(
           {
@@ -380,12 +337,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                         credentials: {someCredentials: "credentials"}
                     };
                 }});
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
 
             const clientSendSpy = jest.spyOn(LocationClient.prototype, 'send')
                 .mockImplementation(() => {
@@ -416,12 +367,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
                   credentials: {someCredentials: "credentials"}
               };
           }});
-      const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-          mapName: MAP_NAME,
-          placesName: PLACES_NAME,
-          region: REGION,
-          apiKey: API_KEY,
-      });
 
       if(categories) {
           amazonLocationMaplibreGeocoder.addCategoryFilters(categories);
@@ -445,12 +390,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
 
     it("maplibreGeocoder should be undefined IF I try to create the geocoder WHEN I have NOT create the APIs",
         () => {
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
 
             const maplibreGeocoder = amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
 
@@ -465,12 +404,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   ])(
       "AmazonLocationMaplibreGeocoder should be able to add Category filters WHEN the number of filters is less than the max number of filters.",
       async (filters : CategoriesEnum[], expected : CategoriesEnum[]) => {
-          const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-              mapName: MAP_NAME,
-              placesName: PLACES_NAME,
-              region: REGION,
-              apiKey: API_KEY,
-          });
           await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
           amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
           expect(amazonLocationMaplibreGeocoder.addCategoryFilters(filters)).toStrictEqual(expected);
@@ -485,12 +418,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
     ])(
         "AmazonLocationMaplibreGeocoder should be able to add Category filters individually until there are too many.",
         async (filters : CategoriesEnum[], expected : CategoriesEnum[]) => {
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
             await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
             amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
             filters.forEach((filter) => {
@@ -501,12 +428,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
 
     it("AmazonLocationMaplibreGeocoder should be able to clear the category filters after setting filters.",
         async () => {
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
             await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
             amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
 
@@ -528,12 +449,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
     ])(
         "AmazonLocationMaplibreGeocoder should be able to add Country filters WHEN the number of filters is less than the max number of filters.",
         async (filters : CountriesEnum[], expected : CountriesEnum[]) => {
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
             await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
             amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
             expect(amazonLocationMaplibreGeocoder.addCountryFilters(filters)).toStrictEqual(expected);
@@ -546,12 +461,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
     ])(
         "AmazonLocationMaplibreGeocoder should be able to add Country filters one at a time WHILE the number of filters is less than the max number of filters.",
         async (filters : CountriesEnum[], expected : CountriesEnum[]) => {
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
             await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
             amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
 
@@ -564,12 +473,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
 
     it("AmazonLocationMaplibreGeocoder should be able to clear the country filters after setting filters.",
         async () => {
-            const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-                mapName: MAP_NAME,
-                placesName: PLACES_NAME,
-                region: REGION,
-                apiKey: API_KEY,
-            });
             await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
             amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
 
@@ -586,12 +489,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
         });
 
     it("bias position and bounding box MUST be exclusive.", async () => {
-        const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-            mapName: MAP_NAME,
-            placesName: PLACES_NAME,
-            region: REGION,
-            apiKey: API_KEY,
-        });
         await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
         amazonLocationMaplibreGeocoder.createAmazonLocationGeocoder();
 
@@ -642,12 +539,6 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
     });
 
     it("Clear all filters MUST clear all filters.", async () => {
-        const amazonLocationMaplibreGeocoder = new AmazonLocationMaplibreGeocoder({
-            mapName: MAP_NAME,
-            placesName: PLACES_NAME,
-            region: REGION,
-            apiKey: API_KEY,
-        });
         await amazonLocationMaplibreGeocoder.createAmazonLocationPlacesSearch();
 
         // set up filter values.
