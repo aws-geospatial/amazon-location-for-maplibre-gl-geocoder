@@ -10,27 +10,27 @@ const banner = `
 `;
 
 export default {
-    input: "./dist/esm/index.js",
-    plugins: [
-        nodeResolve({
-            browser: true,
-        }),
-        json(),
-        commonjs(),
-    ],
+  input: "./dist/esm/index.js",
+  plugins: [
+    nodeResolve({
+      browser: true,
+    }),
+    json(),
+    commonjs(),
+  ],
 
-    output: [
-        {
-            file: "dist/amazonLocationMaplibreGeocoder.js",
-            format: "esm",
-            banner,
-            plugins: [
-                getBabelOutputPlugin({
-                    minified: true,
-                    moduleId: "amazonLocationMaplibreGeocoder",
-                    presets: [["@babel/env", { modules: "umd" }]],
-                }),
-            ],
-        },
-    ],
+  output: [
+    {
+      file: "dist/amazonLocationMaplibreGeocoder.js",
+      format: "esm",
+      banner,
+      plugins: [
+        getBabelOutputPlugin({
+          minified: true,
+          moduleId: "amazonLocationMaplibreGeocoder",
+          presets: [["@babel/env", { modules: "umd" }]],
+        }),
+      ],
+    },
+  ],
 };

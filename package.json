@@ -27,19 +27,20 @@
     "prepublishOnly": "npm-run-all clean lint prettier:check test build"
   },
   "dependencies": {
-    "@maplibre/maplibre-gl-geocoder": "^1.5.0",
+    "@aws/amazon-location-client": "^1.x",
     "@aws/amazon-location-utilities-auth-helper": "^1.0.2",
-    "@aws/amazon-location-client" : "^1.x"
+    "@maplibre/maplibre-gl-geocoder": "^1.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.8",
     "@babel/preset-env": "^7.21.5",
     "@babel/preset-typescript": "^7.21.5",
+    "@jest/types": "^29.5.0",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^25.0.2",
     "@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-node-resolve": "^15.1.0",
-    "@types/jest": "^29.5.0",
+    "@types/jest": "^29.5.5",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "eslint": "^8.37.0",
@@ -56,4 +57,3 @@
     "typescript": "^5.0.2"
   }
 }
-
