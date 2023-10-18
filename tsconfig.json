@@ -9,5 +9,5 @@
     "entryPoints": ["./src/index.ts"]
   },
   "include": ["src"],
-  "exclude": ["node_modules", "node_modules*"]
+  "exclude": ["node_modules", "**/*.test.ts"]
 }
