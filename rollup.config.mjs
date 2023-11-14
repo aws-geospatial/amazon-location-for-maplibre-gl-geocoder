@@ -2,6 +2,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
 import commonjs from "@rollup/plugin-commonjs";
 import { getBabelOutputPlugin } from "@rollup/plugin-babel";
+import nodePolyfills from "rollup-plugin-polyfill-node";
 
 const banner = `
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
@@ -17,6 +18,9 @@ export default {
     }),
     json(),
     commonjs(),
+    nodePolyfills({
+      include: ["events"],
+    }),
   ],
 
   output: [

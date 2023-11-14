@@ -337,8 +337,15 @@ export interface BoundingBox {
 }
 
 export interface AmazonLocationGeocoderApi {
-  forwardGeocode? : Function,
-  reverseGeocode? : Function,
-  getSuggestions? : Function,
-  searchByPlaceId? : Function
+  forwardGeocode?;
+  reverseGeocode?;
+  getSuggestions?;
+  searchByPlaceId?;
+}
+
+export interface PlacesGeocoderOptions {
+  enableAll?: boolean;
+  enableReverseGeocode?: boolean;
+  enableGetSuggestions?: boolean;
+  enableSearchByPlaceId?: boolean;
 }

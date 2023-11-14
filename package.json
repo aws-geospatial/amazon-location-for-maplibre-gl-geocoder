@@ -1,10 +1,10 @@
 {
-  "name": "@aws/amazon-location-for-maplibre-geocoder",
+  "name": "@aws/amazon-location-with-maplibre-gl-geocoder",
   "version": "1.0.0",
   "description": "Maplibre Plugin to Support Amazon Location Service Integration",
-  "main": ".dist/cjs/index.js",
-  "module": ".dist/esm/index.js",
-  "types": ".dist/types/index.d.ts",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
   "files": [
     "./package.json",
     "./dist"
@@ -24,11 +24,12 @@
     "build-ts:cjs": "tsc --module commonjs --outDir dist/cjs",
     "build-ts:esm": "tsc --esModuleInterop --module esnext --outDir dist/esm",
     "prepare": "husky install",
-    "prepublishOnly": "npm-run-all clean lint prettier:check test build"
+    "prepublishOnly": "npm-run-all build clean lint prettier prettier:check test build build:bundle"
   },
   "dependencies": {
-    "@aws/amazon-location-client": "^1.x",
+    "@aws-sdk/client-location": "^3.445.0",
     "@aws/amazon-location-utilities-auth-helper": "^1.0.2",
+    "@aws/amazon-location-utilities-datatypes": "^1.0.3",
     "@maplibre/maplibre-gl-geocoder": "^1.5.0"
   },
   "devDependencies": {
@@ -51,6 +52,7 @@
     "prettier": "^2.8.7",
     "prettier-plugin-jsdoc": "^0.4.2",
     "rollup": "^3.22.0",
+    "rollup-plugin-polyfill-node": "^0.13.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
     "typedoc": "^0.24.1",
