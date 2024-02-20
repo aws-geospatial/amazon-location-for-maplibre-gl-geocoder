@@ -1,6 +1,10 @@
 # amazon-location-with-maplibre-gl-geocoder
 
+<<<<<<< HEAD
 This library is uesd to simplify the process of using [Amazon Location Service](https://aws.amazon.com/location/) with [maplibre-gl-geocoder](https://github.com/maplibre/maplibre-gl-geocoder) in JavaScript Applications.
+=======
+This library is used to simplify the process of using [Amazon Location Service](https://aws.amazon.com/location/) with [maplibre-gl-geocoder](https://github.com/maplibre/maplibre-gl-geocoder) in JavaScript Applications.
+>>>>>>> 23b1045 (Added some sections to the ReadMe)
 
 ## Installation
 
@@ -72,7 +76,11 @@ This example uses the Amazon Location Client to make a request that that authent
 
 ```html
 <!-- Import thw Amazon Location With Maplibre Geocoder --> 
+<<<<<<< HEAD
 <script src="https://www.unpkg.com/@aws/amazon-location-with-maplibre-geocoder@1"
+=======
+<script src="https://www.unpkg.com/@aws/amazon-location-with-maplibre-geocoder@1"></script>
+>>>>>>> 23b1045 (Added some sections to the ReadMe)
 <!-- Import the Amazon Location Client -->
 <script src="https://www.unpkg.com/@aws/amazon-location-client@1"></script>
 <!-- Import the utility library -->
