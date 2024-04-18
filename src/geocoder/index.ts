@@ -44,6 +44,9 @@ export class AmazonLocationMaplibreGeocoder {
   public constructor(amazonLocationGeocoderApi: AmazonLocationGeocoderApi, options?) {
     this.amazonLocationApi = amazonLocationGeocoderApi;
     if (this.amazonLocationApi.forwardGeocode != undefined) {
+      console.log("Here is the current options: ");
+      parseObject(options);
+
       this.maplibreGeocoder = new MaplibreGeocoder(this.amazonLocationApi, {
         maplibregl: maplibregl,
         language: this.language,
@@ -72,15 +75,24 @@ export class AmazonLocationMaplibreGeocoder {
     return false;
   }
 
-  public addCategoryFilter(category: CategoriesEnum): boolean {
+  public addCategoryFilter(category: string): boolean {
     if (this.filterCategories.length < MAX_CATEGORY_FILTERS) {
-      this.filterCategories.push(category);
-      this.updateMaplibreGeocoderCategoryFilter();
-      return true;
+      const fixedStr = removeWhiteSpace(category);
+      const enumCategory = CategoriesEnum[removeWhiteSpace(category) as keyof typeof CategoriesEnum];
+      if (enumCategory) {
+        this.filterCategories.push(CategoriesEnum[fixedStr as keyof typeof CategoriesEnum]);
+        this.updateMaplibreGeocoderCategoryFilter();
+        return true;
+      } else {
+        console.log(
+          `String: ${category}, is not a valid Category Filter. Please check the accepted Category Filters, and try again.`,
+        );
+      }
+    } else {
+      console.log(
+        `Number of categories is already at max filters of ${MAX_CATEGORY_FILTERS}. No change to filter selection. Remove a category before adding another.`,
+      );
     }
-    console.log(
-      `Number of categories is already at max filters of ${MAX_CATEGORY_FILTERS}. No change to filter selection. Remove a category before adding another.`,
-    );
     return false;
   }
 
@@ -95,6 +107,8 @@ export class AmazonLocationMaplibreGeocoder {
 
   private updateMaplibreGeocoderCategoryFilter() {
     this.maplibreGeocoder.setTypes(this.filterCategories.join(","));
+
+    console.log(`Here is the string that maplibreGeocoder stores: ${this.maplibreGeocoder.getTypes()}`);
   }
 
   public setCountryFilter(filters: CountriesEnum[]): boolean {
@@ -132,6 +146,7 @@ export class AmazonLocationMaplibreGeocoder {
 
   private updateMaplibreGeocoderCountryFilter() {
     this.maplibreGeocoder.setCountries(this.filterCountries.join(","));
+    console.log(`Here is the string that maplibreGeocoder stores: ${this.maplibreGeocoder.getCountries()}`);
   }
 
   // You cannot have a bias and a BBox in the same call, this will remove the bias and add the bbox.
@@ -256,7 +271,34 @@ export function buildAmazonLocationMaplibreGeocoder(
     }
   }
 
+  const renderFunction = getRenderFunction();
+  maplibreglgeocoderOptions = {
+    ...maplibreglgeocoderOptions,
+    render: renderFunction,
+  };
+
   return new AmazonLocationMaplibreGeocoder(amazonLocationGeocoderApi, maplibreglgeocoderOptions);
+}
+
+function parseObject(obj) {
+  for (const key in obj) {
+    console.log("key: " + key + ", value: " + obj[key]);
+    if (obj[key] instanceof Object) {
+      parseObject(obj[key]);
+    }
+  }
+}
+
+function removeWhiteSpace(str: string) {
+  return str.replace(/\s/g, "");
+}
+
+function addWhiteSpace(str) {
+  // Special exception for single category.
+  if (str == "ATM") {
+    return str;
+  }
+  return str.replace(/([A-Z])/g, " $1").trim();
 }
 
 function createAmazonLocationForwardGeocodeApi(amazonLocationClient: LocationClient, customerPlacesName: string) {
@@ -280,7 +322,15 @@ function createAmazonLocationForwardGeocodeApi(amazonLocationClient: LocationCli
       }
 
       if (config.types) {
-        searchPlaceIndexForTextParams.FilterCategories = config.types.toString().split(",");
+        // Convert the string into an array broken by the comma's.
+        const categories = config.types.toString().split(",");
+
+        // Add a white space in the middle of all strings that were multiple words.
+        for (const index in categories) {
+          categories[index] = addWhiteSpace(categories[index]);
+          console.log(`Here is the new value at ${index} for categories: ${categories[index]}`);
+        }
+        searchPlaceIndexForTextParams.FilterCategories = categories;
       }
 
       if (config.bbox) {
@@ -425,7 +475,14 @@ function createAmazonLocationGetSuggestions(amazonLocationClient: LocationClient
       }
 
       if (config.types) {
-        searchPlaceIndexForSuggestionsParams.FilterCategories = config.types.toString().split(",");
+        // Convert the string into an array broken by the comma's.
+        const categories = config.types.toString().split(",");
+
+        // Add a white space in the middle of all strings that were multiple words.
+        for (const index in categories) {
+          categories[index] = addWhiteSpace(categories[index]);
+        }
+        searchPlaceIndexForSuggestionsParams.FilterCategories = categories;
       }
 
       if (config.bbox) {
@@ -458,5 +515,82 @@ function createAmazonLocationGetSuggestions(amazonLocationClient: LocationClient
     return {
       suggestions: suggestions,
     };
+  };
+}
+
+function getRenderFunction() {
+  return function (item) {
+    // Gather the key items
+    const geometry = item.geometry ? item.geometry : undefined;
+    const placeId = item.placeId ? item.placeId : "";
+    const text = item.text ? item.text : "";
+
+    // Let's calc the substring that we are matching with.
+    const separateIndex = text != "" ? text.indexOf(",") : -1;
+    const title = separateIndex > -1 ? text.substring(0, separateIndex) : text;
+    const address = separateIndex > 1 ? text.substring(separateIndex + 1).trim() : null;
+
+    // If we have a placeId or a geometry we have a specific location, and we would like to use the pin icon.
+    if (placeId || geometry) {
+      // Check to see if we have title + address or just a title.
+      if (address) {
+        return (
+          '<div class="mlg-option-container">' +
+          '<svg class="mlg-icon" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg"><path d="M7.21875,20.96875 C7.21875,21.5402344 6.75898437,22 6.1875,22 C5.61601562,22 5.15625,21.5402344 5.15625,20.96875 L5.15625,12.2890625 C2.23007813,11.7992188 0,9.25546875 0,6.1875 C0,2.77019531 2.77019531,0 6.1875,0 C9.60351562,0 12.375,2.77019531 12.375,6.1875 C12.375,9.25546875 10.1449219,11.7992188 7.21875,12.2890625 L7.21875,20.96875 Z M6.1875,2.0625 C3.87148437,2.0625 2.0625,3.90929687 2.0625,6.1875 C2.0625,8.46484375 3.87148437,10.3125 6.1875,10.3125 C8.46484375,10.3125 10.3125,8.46484375 10.3125,6.1875 C10.3125,3.90929687 8.46484375,2.0625 6.1875,2.0625 Z" fill="#687078"/></svg>' +
+          '<div class="mlg-option-details">' +
+          '<div class="mlg-place-name">' +
+          title +
+          "</div>" +
+          '<div class="mlg-address">' +
+          address +
+          "</div>" +
+          "</div>" +
+          "</div>"
+        );
+      }
+      return (
+        '<div class="mlg-option-container">' +
+        '<svg class="mlg-icon" viewBox="0 0 24 32" xmlns="http://www.w3.org/2000/svg"><path d="M7.21875,20.96875 C7.21875,21.5402344 6.75898437,22 6.1875,22 C5.61601562,22 5.15625,21.5402344 5.15625,20.96875 L5.15625,12.2890625 C2.23007813,11.7992188 0,9.25546875 0,6.1875 C0,2.77019531 2.77019531,0 6.1875,0 C9.60351562,0 12.375,2.77019531 12.375,6.1875 C12.375,9.25546875 10.1449219,11.7992188 7.21875,12.2890625 L7.21875,20.96875 Z M6.1875,2.0625 C3.87148437,2.0625 2.0625,3.90929687 2.0625,6.1875 C2.0625,8.46484375 3.87148437,10.3125 6.1875,10.3125 C8.46484375,10.3125 10.3125,8.46484375 10.3125,6.1875 C10.3125,3.90929687 8.46484375,2.0625 6.1875,2.0625 Z" fill="#687078"/></svg>' +
+        '<div class="mlg-option-details">' +
+        '<div class="mlg-place-name">' +
+        title +
+        "</div>" +
+        '<div class="mlg-address">' +
+        "Search Nearby" +
+        "</div>" +
+        "</div>" +
+        "</div>"
+      );
+      // We do not appear to have a specific place, we would like to use the magnify glass icon.
+    } else {
+      if (address) {
+        return (
+          '<div class="mlg-option-container">' +
+          '<svg class="mlg-icon" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2,8 C2,4.691 4.691,2 8,2 C11.309,2 14,4.691 14,8 C14,11.309 11.309,14 8,14 C4.691,14 2,11.309 2,8 M17.707,16.293 L14.312,12.897 C15.365,11.543 16,9.846 16,8 C16,3.589 12.411,0 8,0 C3.589,0 0,3.589 0,8 C0,12.411 3.589,16 8,16 C9.846,16 11.543,15.365 12.897,14.312 L16.293,17.707 C16.488,17.902 16.744,18 17,18 C17.256,18 17.512,17.902 17.707,17.707 C18.098,17.316 18.098,16.684 17.707,16.293" fill="#687078"/></svg>' +
+          '<div class="mlg-option-details">' +
+          '<div class="mlg-place-name">' +
+          title +
+          "</div>" +
+          '<div class="mlg-address">' +
+          address +
+          "</div>" +
+          "</div>" +
+          "</div>"
+        );
+      }
+      return (
+        '<div class="mlg-option-container">' +
+        '<svg class="mlg-icon" viewBox="0 0 24 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2,8 C2,4.691 4.691,2 8,2 C11.309,2 14,4.691 14,8 C14,11.309 11.309,14 8,14 C4.691,14 2,11.309 2,8 M17.707,16.293 L14.312,12.897 C15.365,11.543 16,9.846 16,8 C16,3.589 12.411,0 8,0 C3.589,0 0,3.589 0,8 C0,12.411 3.589,16 8,16 C9.846,16 11.543,15.365 12.897,14.312 L16.293,17.707 C16.488,17.902 16.744,18 17,18 C17.256,18 17.512,17.902 17.707,17.707 C18.098,17.316 18.098,16.684 17.707,16.293" fill="#687078"/></svg>' +
+        '<div class="mlg-option-details">' +
+        '<div class="mlg-place-name">' +
+        title +
+        "</div>" +
+        '<div class="mlg-address">' +
+        "Search Nearby" +
+        "</div>" +
+        "</div>" +
+        "</div>"
+      );
+    }
   };
 }
