@@ -27,8 +27,8 @@
     "prepublishOnly": "npm-run-all build clean lint prettier prettier:check test build build:bundle"
   },
   "dependencies": {
-    "@aws-sdk/client-location": "^3.525.0",
-    "@aws/amazon-location-utilities-auth-helper": "^1.0.5",
+    "@aws-sdk/client-location": "^3.554.0",
+    "@aws/amazon-location-utilities-auth-helper": "^1.0.4",
     "@aws/amazon-location-utilities-datatypes": "^1.0.5",
     "@maplibre/maplibre-gl-geocoder": "^1.5.0"
   },
@@ -51,11 +51,11 @@
     "npm-run-all": "^4.1.5",
     "prettier": "^3.2.5",
     "prettier-plugin-jsdoc": "^1.3.0",
-    "rollup": "^4.12.0",
+    "rollup": "^4.14.3",
     "rollup-plugin-polyfill-node": "^0.13.0",
     "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
-    "typedoc": "^0.25.10",
-    "typescript": "^5.3.3"
+    "typedoc": "^0.25.13",
+    "typescript": "^5.4.5"
   }
 }
