@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-location": "^3.556.0",
-    "@aws/amazon-location-utilities-auth-helper": "^1.0.4",
+    "@aws/amazon-location-utilities-auth-helper": "^1.0.6",
     "@aws/amazon-location-utilities-datatypes": "^1.0.5",
     "@maplibre/maplibre-gl-geocoder": "^1.5.0"
   },
