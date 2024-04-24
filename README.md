@@ -1,4 +1,4 @@
-# amazon-location-with-maplibre-gl-geocoder
+# amazon-location-for-maplibre-gl-geocoder
 
 This library is used to simplify the process of using [Amazon Location Service](https://aws.amazon.com/location/) with [maplibre-gl-geocoder](https://github.com/maplibre/maplibre-gl-geocoder) in JavaScript Applications.
 
@@ -7,13 +7,14 @@ This library is used to simplify the process of using [Amazon Location Service](
 Install this library from NPM for usage with modules:
 
 ```console
-npm install @aws/amazon-location-with-maplibre-gl-geocoder
+npm install @aws/amazon-location-for-maplibre-gl-geocoder
 ```
 
-Importing in an HTML file for usage directly in the browser.
+You can also import HTML and CSS files for usage directly in the browser.
 
 ```html
-<script src="https://www.unpkg.com/@aws/amazon-location-with-maplibre-gl-geocoder@1"></script>
+<script src="https://www.unpkg.com/@aws/amazon-location-for-maplibre-gl-geocoder@1"></script>
+<link href="www.unpkg.com/@aws/amazon-location-for-maplibre-geocoder@1/dist/amazon-location-for-mlg-styles.css" rel="stylesheet" />
 ```
 
 ## Usage
@@ -33,7 +34,7 @@ import { withIdentityPoolId } from "@aws/amazon-location-utilities-auth-helper";
 import {
   buildAmazonLocationMaplibreGeocoder,
   AmazonLocationMaplibreGeocoder,
-} from "@aws/amazon-location-with-maplibre-gl-geocoder";
+} from "@aws/amazon-location-for-maplibre-gl-geocoder";
 
 const identityPoolId = "<Identity Pool ID>";
 const mapName = "<Map Name>";
@@ -73,8 +74,8 @@ Utility functions are available under the `amazonLocationAuthHelper` global.
 This example uses the Amazon Location Client to make a request that that authenticates using Amazon Cognito.
 
 ```html
-<!-- Import thw Amazon Location With Maplibre Geocoder -->
-<script src="https://www.unpkg.com/@aws/amazon-location-with-maplibre-geocoder@1"></script>
+<!-- Import thw Amazon Location For Maplibre Geocoder -->
+<script src="https://www.unpkg.com/@aws/amazon-location-for-maplibre-geocoder@1"></script>
 <!-- Import the Amazon Location Client -->
 <script src="https://www.unpkg.com/@aws/amazon-location-client@1"></script>
 <!-- Import the utility library -->
