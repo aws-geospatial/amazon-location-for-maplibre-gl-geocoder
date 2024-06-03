@@ -8,7 +8,9 @@
 
 .maplibregl-ctrl-geocoder {
   background-color: #fff;
-  transition: width 0.25s, min-width 0.25s;
+  transition:
+    width 0.25s,
+    min-width 0.25s;
   gap: 0;
   opacity: 1;
   height: 40px;
@@ -62,7 +64,9 @@
 .maplibregl-ctrl-geocoder.maplibregl-ctrl-geocoder--collapsed {
   width: 50px;
   min-width: 50px;
-  transition: width 0.25s, min-width 0.25s;
+  transition:
+    width 0.25s,
+    min-width 0.25s;
 }
 
 /* Suggestions */

@@ -14,7 +14,10 @@ You can also import HTML and CSS files for usage directly in the browser.
 
 ```html
 <script src="https://www.unpkg.com/@aws/amazon-location-for-maplibre-gl-geocoder@1"></script>
-<link href="www.unpkg.com/@aws/amazon-location-for-maplibre-geocoder@1/dist/amazon-location-for-mlg-styles.css" rel="stylesheet" />
+<link
+  href="https://www.unpkg.com/@aws/amazon-location-for-maplibre-gl-geocoder@1/dist/amazon-location-for-mlg-styles.css"
+  rel="stylesheet"
+/>
 ```
 
 ## Usage
@@ -58,7 +61,7 @@ const map = new maplibregl.Map({
   ...authHelper.getMapAuthenticationOptions(),
 });
 
-// Gets an instnace of the AmazonLocationMaplibreGeocoder Object.
+// Gets an instance of the AmazonLocationMaplibreGeocoder Object.
 const amazonLocationMaplibreGeocoder = buildAmazonLocationMaplibreGeocoder(client, placeIndex, { enableAll: true });
 
 // Now we can add the Geocoder to the map.
