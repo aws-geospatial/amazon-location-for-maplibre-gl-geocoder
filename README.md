@@ -1,5 +1,7 @@
 # amazon-location-for-maplibre-gl-geocoder
 
+[![Version](https://img.shields.io/npm/v/@aws/amazon-location-for-maplibre-gl-geocoder?style=flat)](https://www.npmjs.com/package/@aws/amazon-location-for-maplibre-gl-geocoder) [![Tests](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/actions/workflows/build.yml/badge.svg)](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/actions/workflows/build.yml)
+
 This library is used to simplify the process of using [Amazon Location Service](https://aws.amazon.com/location/) with [maplibre-gl-geocoder](https://github.com/maplibre/maplibre-gl-geocoder) in JavaScript Applications.
 
 ## Installation
