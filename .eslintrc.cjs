@@ -11,6 +11,7 @@ module.exports = {
       files: ["test-utils.ts", "**/*.test.ts"],
       rules: {
         "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/no-empty-function": "off",
       },
     },
   ],

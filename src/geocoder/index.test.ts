@@ -6,6 +6,7 @@ import {
   SearchPlaceIndexForTextCommand,
 } from "@aws-sdk/client-location";
 import { withAPIKey, withIdentityPoolId } from "@aws/amazon-location-utilities-auth-helper";
+import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
 import { AmazonLocationMaplibreGeocoder, buildAmazonLocationMaplibreGeocoder } from "./index";
 import { BoundingBox, CategoriesEnum, CountriesEnum, Position } from "../common/types";
 import {
@@ -22,8 +23,12 @@ export interface AmazonLocationMaplibreGeocoderParams {
   identityPoolId?: string;
 }
 
+jest.spyOn(console, "warn").mockImplementation(() => {});
+jest.spyOn(console, "error").mockImplementation(() => {});
+
 jest.mock("@aws-sdk/client-location");
 jest.mock("@aws/amazon-location-utilities-auth-helper");
+jest.mock("@maplibre/maplibre-gl-geocoder");
 
 describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => {
   const PLACES_NAME = "places.name";
@@ -54,6 +59,10 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
         };
       },
     });
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it("AmazonLocationMaplibreGeocoder should throw error if you try to initialized it without passing in api's", () => {
@@ -660,5 +669,17 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
     // Clear all filters
     geocoder.clearFilters();
     expect(geocoder.getBiasPosition()).toStrictEqual(null);
+  });
+
+  it("placeholder should be passed to MaplibreGeocoder when specified.", async () => {
+    buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+      placeholder: "Test Placeholder",
+    });
+
+    expect(MaplibreGeocoder).toHaveBeenCalledTimes(1);
+
+    // The options are the second argument to MaplibreGeocoder
+    const options = MaplibreGeocoder.mock.calls[0][1];
+    expect(options.placeholder).toStrictEqual("Test Placeholder");
   });
 });

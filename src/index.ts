@@ -1,3 +1,4 @@
 import { AmazonLocationMaplibreGeocoder, buildAmazonLocationMaplibreGeocoder } from "./geocoder";
+import { PlacesGeocoderOptions } from "./common/types";
 
-export { AmazonLocationMaplibreGeocoder, buildAmazonLocationMaplibreGeocoder };
+export { AmazonLocationMaplibreGeocoder, buildAmazonLocationMaplibreGeocoder, PlacesGeocoderOptions };
