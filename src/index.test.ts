@@ -8,4 +8,8 @@ describe("Exported class", () => {
   it("Should export buildAmazonLocationMaplibreGeocoder", () => {
     expect("buildAmazonLocationMaplibreGeocoder" in amazonLocationMaplibreGeocoder).toBe(true);
   });
+
+  it("Should export PlacesGeocoderOptions", () => {
+    expect("PlacesGeocoderOptions" in amazonLocationMaplibreGeocoder).toBe(true);
+  });
 });

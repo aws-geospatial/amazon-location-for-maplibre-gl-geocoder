@@ -348,4 +348,6 @@ export interface PlacesGeocoderOptions {
   enableReverseGeocode?: boolean;
   enableGetSuggestions?: boolean;
   enableSearchByPlaceId?: boolean;
+  omitSuggestionsWithoutPlaceId?: boolean;
+  placeholder?: string;
 }

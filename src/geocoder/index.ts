@@ -44,7 +44,6 @@ export class AmazonLocationMaplibreGeocoder {
   public constructor(amazonLocationGeocoderApi: AmazonLocationGeocoderApi, options?) {
     this.amazonLocationApi = amazonLocationGeocoderApi;
     if (this.amazonLocationApi.forwardGeocode != undefined) {
-      console.log("Here is the current options: ");
       parseObject(options);
 
       this.maplibreGeocoder = new MaplibreGeocoder(this.amazonLocationApi, {
@@ -69,7 +68,7 @@ export class AmazonLocationMaplibreGeocoder {
       this.updateMaplibreGeocoderCategoryFilter();
       return true;
     }
-    console.log(
+    console.warn(
       `Number of categories ${filters.length} exceeds max number of ${MAX_CATEGORY_FILTERS} at a time. No change to filter selection.`,
     );
     return false;
@@ -84,12 +83,12 @@ export class AmazonLocationMaplibreGeocoder {
         this.updateMaplibreGeocoderCategoryFilter();
         return true;
       } else {
-        console.log(
+        console.warn(
           `String: ${category}, is not a valid Category Filter. Please check the accepted Category Filters, and try again.`,
         );
       }
     } else {
-      console.log(
+      console.warn(
         `Number of categories is already at max filters of ${MAX_CATEGORY_FILTERS}. No change to filter selection. Remove a category before adding another.`,
       );
     }
@@ -107,8 +106,6 @@ export class AmazonLocationMaplibreGeocoder {
 
   private updateMaplibreGeocoderCategoryFilter() {
     this.maplibreGeocoder.setTypes(this.filterCategories.join(","));
-
-    console.log(`Here is the string that maplibreGeocoder stores: ${this.maplibreGeocoder.getTypes()}`);
   }
 
   public setCountryFilter(filters: CountriesEnum[]): boolean {
@@ -117,7 +114,7 @@ export class AmazonLocationMaplibreGeocoder {
       this.updateMaplibreGeocoderCountryFilter();
       return true;
     }
-    console.log(
+    console.warn(
       `Number of countries ${filters.length} exceeds max number of ${MAX_COUNTRY_FILTERS} at a time. No change to filter selection.`,
     );
     return false;
@@ -129,7 +126,7 @@ export class AmazonLocationMaplibreGeocoder {
       this.updateMaplibreGeocoderCountryFilter();
       return true;
     }
-    console.log(
+    console.warn(
       `Number of countries is already at max filters of ${MAX_COUNTRY_FILTERS}. No change to filter selection. Remove a country before adding another.`,
     );
     return false;
@@ -146,7 +143,6 @@ export class AmazonLocationMaplibreGeocoder {
 
   private updateMaplibreGeocoderCountryFilter() {
     this.maplibreGeocoder.setCountries(this.filterCountries.join(","));
-    console.log(`Here is the string that maplibreGeocoder stores: ${this.maplibreGeocoder.getCountries()}`);
   }
 
   // You cannot have a bias and a BBox in the same call, this will remove the bias and add the bbox.
@@ -231,6 +227,8 @@ export function buildAmazonLocationMaplibreGeocoder(
 ) {
   const locationClient = amazonLocationClient;
 
+  const omitSuggestionsWithoutPlaceId = options?.omitSuggestionsWithoutPlaceId || false;
+
   const amazonLocationGeocoderApi: AmazonLocationGeocoderApi = {};
 
   // maplibre-gl-geocoder always requires we have defined forwardGeocode.
@@ -242,7 +240,11 @@ export function buildAmazonLocationMaplibreGeocoder(
     if (options.enableAll) {
       amazonLocationGeocoderApi.reverseGeocode = createAmazonLocationReverseGeocodeApi(locationClient, indexName);
       amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceById(locationClient, indexName);
-      amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestions(locationClient, indexName);
+      amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestions(
+        locationClient,
+        indexName,
+        omitSuggestionsWithoutPlaceId,
+      );
       maplibreglgeocoderOptions = {
         ...maplibreglgeocoderOptions,
         reverseGeocode: true,
@@ -262,12 +264,23 @@ export function buildAmazonLocationMaplibreGeocoder(
       }
 
       if (options.enableGetSuggestions) {
-        amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestions(locationClient, indexName);
+        amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestions(
+          locationClient,
+          indexName,
+          omitSuggestionsWithoutPlaceId,
+        );
         maplibreglgeocoderOptions = {
           ...maplibreglgeocoderOptions,
           showResultsWhileTyping: true,
         };
       }
+    }
+
+    if (options.placeholder) {
+      maplibreglgeocoderOptions = {
+        ...maplibreglgeocoderOptions,
+        placeholder: options.placeholder,
+      };
     }
   }
 
@@ -282,7 +295,6 @@ export function buildAmazonLocationMaplibreGeocoder(
 
 function parseObject(obj) {
   for (const key in obj) {
-    console.log("key: " + key + ", value: " + obj[key]);
     if (obj[key] instanceof Object) {
       parseObject(obj[key]);
     }
@@ -328,7 +340,6 @@ function createAmazonLocationForwardGeocodeApi(amazonLocationClient: LocationCli
         // Add a white space in the middle of all strings that were multiple words.
         for (const index in categories) {
           categories[index] = addWhiteSpace(categories[index]);
-          console.log(`Here is the new value at ${index} for categories: ${categories[index]}`);
         }
         searchPlaceIndexForTextParams.FilterCategories = categories;
       }
@@ -359,7 +370,7 @@ function createAmazonLocationForwardGeocodeApi(amazonLocationClient: LocationCli
           },
           place_name: result.Place.Label,
           properties: {
-            ...result.Place,
+            ...result,
           },
           text: result.Place.Label,
           place_type: ["place"],
@@ -403,7 +414,7 @@ function createAmazonLocationReverseGeocodeApi(amazonLocationClient: LocationCli
           },
           place_name: result.Place.Label,
           properties: {
-            ...result.Place,
+            ...result,
           },
           text: result.Place.Label,
           place_type: ["place"],
@@ -445,6 +456,9 @@ function createAmazonLocationSearchPlaceById(amazonLocationClient: LocationClien
           coordinates: data.Place.Geometry.Point,
         },
         place_name: data.Place.Label,
+        properties: {
+          ...data,
+        },
         text: data.Place.Label,
         center: data.Place.Geometry.Point,
       };
@@ -455,7 +469,11 @@ function createAmazonLocationSearchPlaceById(amazonLocationClient: LocationClien
   };
 }
 
-function createAmazonLocationGetSuggestions(amazonLocationClient: LocationClient, customerPlacesName: string) {
+function createAmazonLocationGetSuggestions(
+  amazonLocationClient: LocationClient,
+  customerPlacesName: string,
+  omitSuggestionsWithoutPlaceId: boolean,
+) {
   // Since 'this' does not exist in the context of the APIs we will need to have const values we pass through at point of creation.
   const placesName = customerPlacesName;
   const client = amazonLocationClient;
@@ -502,6 +520,11 @@ function createAmazonLocationGetSuggestions(amazonLocationClient: LocationClient
       const data = await client.send(command);
       // Iterate over data.Results and return all suggestions and their place ids
       for (const result of data.Results) {
+        // Skip suggestions that don't have a PlaceId (query suggestions) if specified
+        if (omitSuggestionsWithoutPlaceId && !result.PlaceId) {
+          continue;
+        }
+
         const suggestionWithPlace = {
           text: result.Text,
           placeId: result.PlaceId,
