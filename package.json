@@ -1,6 +1,6 @@
 {
   "name": "@aws/amazon-location-for-maplibre-gl-geocoder",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Maplibre Plugin to Support Amazon Location Service Integration",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
