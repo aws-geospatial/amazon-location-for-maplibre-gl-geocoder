@@ -3,6 +3,7 @@
     "target": "es2017",
     "moduleResolution": "node",
     "outDir": "dist",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
   "typedocOptions": {
