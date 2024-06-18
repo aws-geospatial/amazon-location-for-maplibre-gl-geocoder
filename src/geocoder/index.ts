@@ -436,11 +436,12 @@ function createAmazonLocationSearchPlaceById(amazonLocationClient: LocationClien
   const client = amazonLocationClient;
   return async function (config) {
     let feature;
+    const placeId = config.query;
     try {
       // Set up parameters for search call
       const getPlaceParams: GetPlaceCommandInput = {
         IndexName: placesName,
-        PlaceId: config.query,
+        PlaceId: placeId,
         // Maplibre-gl-geocoder stores the language value as an array of language codes. Amazon Location only supports a single language at a time.
         Language: config.language[0],
       };
@@ -458,6 +459,7 @@ function createAmazonLocationSearchPlaceById(amazonLocationClient: LocationClien
         place_name: data.Place.Label,
         properties: {
           ...data,
+          PlaceId: placeId,
         },
         text: data.Place.Label,
         center: data.Place.Geometry.Point,

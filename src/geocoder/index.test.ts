@@ -307,12 +307,8 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
 
   it("searchByPlaceId should return data in expected format WHEN given valid credentials.", async () => {
     const config = {
-      query: "a map query",
+      query: "A_PLACE_ID",
       language: "en",
-      types: "",
-      countries: "",
-      proximity: {},
-      bbox: [],
     };
 
     const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
@@ -334,16 +330,13 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
 
     expect(response.place.place_name).toEqual("Small Town");
     expect(response.place.geometry.coordinates).toEqual([123, 456]);
+    expect(response.place.properties.PlaceId).toStrictEqual("A_PLACE_ID");
   });
 
   it("searchByPlaceId throws error when error is encountered", async () => {
     const config = {
-      query: "a map query",
+      query: "A_PLACE_ID",
       language: "en",
-      types: "",
-      countries: "",
-      proximity: {},
-      bbox: [],
     };
 
     const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
