@@ -1,12 +1,19 @@
+# 1.0.5
+### 🐞 Bug fixes
+* Fix to publish the bundled script for browser: #99
+
 # 1.0.4
 ### ✨ Features and improvements
 * Added Changelog and Continuous Deployment
+
 # 1.0.3
 ### 🐞 Bug fixes
 * Added missing PlaceId field in response when searching by PlaceId: #91
+
 # 1.0.2
 ### 🐞 Bug fixes
 * Fixed issue when bundling by enabling esModuleInterop #83
+
 # 1.0.1
 ### ✨ Features and improvements
 * Added omitSuggestionsWithoutPlaceId option to omit suggestions that don't have a PlaceId (e.g. query string suggestions, such as "pizza near me")
@@ -17,6 +24,7 @@
 
 ### 🐞 Bug fixes
 * Removed a number of console.log debug prints that were left behind
+
 # 1.0.0
 ### ✨ Features and improvements
 * Integrate Amazon Location Service API with MapLibre GL Geocoder
