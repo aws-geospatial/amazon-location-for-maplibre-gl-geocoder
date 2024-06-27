@@ -79,8 +79,8 @@ Utility functions are available under the `amazonLocationAuthHelper` global.
 This example uses the Amazon Location Client to make a request that that authenticates using Amazon Cognito.
 
 ```html
-<!-- Import thw Amazon Location For Maplibre Geocoder -->
-<script src="https://www.unpkg.com/@aws/amazon-location-for-maplibre-geocoder@1"></script>
+<!-- Import the Amazon Location For Maplibre Geocoder -->
+<script src="https://www.unpkg.com/@aws/amazon-location-for-maplibre-gl-geocoder@1"></script>
 <!-- Import the Amazon Location Client -->
 <script src="https://www.unpkg.com/@aws/amazon-location-client@1"></script>
 <!-- Import the utility library -->
