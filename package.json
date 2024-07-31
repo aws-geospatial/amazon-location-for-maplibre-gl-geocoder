@@ -30,8 +30,8 @@
     "prepublishOnly": "npm-run-all build clean lint prettier prettier:check test build build:bundle"
   },
   "dependencies": {
-    "@aws-sdk/client-location": "^3.564.0",
-    "@aws/amazon-location-utilities-auth-helper": "^1.0.6",
+    "@aws-sdk/client-location": "^3.621.0",
+    "@aws/amazon-location-utilities-auth-helper": "^1.0.7",
     "@aws/amazon-location-utilities-datatypes": "^1.0.5",
     "@maplibre/maplibre-gl-geocoder": "^1.5.0"
   },
