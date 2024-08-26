@@ -9,16 +9,9 @@ import {
   SearchPlaceIndexForSuggestionsCommandInput,
   SearchPlaceIndexForTextCommandInput,
 } from "@aws-sdk/client-location";
-import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
+import { default as MaplibreGeocoder, MaplibreGeocoderApi } from "@maplibre/maplibre-gl-geocoder";
 import maplibregl, { IControl } from "maplibre-gl";
-import {
-  CategoriesEnum,
-  CountriesEnum,
-  BoundingBox,
-  Position,
-  AmazonLocationGeocoderApi,
-  PlacesGeocoderOptions,
-} from "../common/types";
+import { CategoriesEnum, CountriesEnum, BoundingBox, Position, PlacesGeocoderOptions } from "../common/types";
 
 import {
   ATTEMPTING_TO_MANUALLY_CREATE_ERROR_MESSAGE,
@@ -38,10 +31,10 @@ export class AmazonLocationMaplibreGeocoder {
   private language = "en";
 
   // This is the state of the API that currently exist
-  readonly amazonLocationApi: AmazonLocationGeocoderApi;
+  readonly amazonLocationApi: MaplibreGeocoderApi;
 
-  // Since it is technically possible for a customer to define the AmazonLocationGeocoderApi themselves, check to make sure they have at least forward defined.
-  public constructor(amazonLocationGeocoderApi: AmazonLocationGeocoderApi, options?) {
+  // Since it is technically possible for a customer to define the MaplibreGeocoderApi themselves, check to make sure they have at least forward defined.
+  public constructor(amazonLocationGeocoderApi: MaplibreGeocoderApi, options?) {
     this.amazonLocationApi = amazonLocationGeocoderApi;
     if (this.amazonLocationApi.forwardGeocode != undefined) {
       parseObject(options);
@@ -159,16 +152,16 @@ export class AmazonLocationMaplibreGeocoder {
 
   public clearBoundingBox(): void {
     this.filterBBox = null;
-    this.updateMaplibreGeocoderBoundingBox([]);
+    this.updateMaplibreGeocoderBoundingBox(null);
   }
 
   public getBoundingBox() {
     return this.filterBBox;
   }
 
-  private updateMaplibreGeocoderBoundingBox(BBox: number[]) {
+  private updateMaplibreGeocoderBoundingBox(BBox: [number, number, number, number]) {
     this.maplibreGeocoder.setBbox(BBox);
-    this.maplibreGeocoder.setProximity({}); // clears the proximity since we can only use one.
+    this.maplibreGeocoder.setProximity(null); // clears the proximity since we can only use one.
   }
 
   public setBiasPosition(position: Position): void {
@@ -189,7 +182,7 @@ export class AmazonLocationMaplibreGeocoder {
 
   private updateMaplibreGeocoderBiasPosition(position): void {
     this.maplibreGeocoder.setProximity(position);
-    this.maplibreGeocoder.setBbox([]); // clears Bbox since we can only have one or the other.
+    this.maplibreGeocoder.setBbox(null); // clears Bbox since we can only have one or the other.
   }
 
   // This function will clear all filters at once.
@@ -200,7 +193,7 @@ export class AmazonLocationMaplibreGeocoder {
     this.biasPosition = null;
     this.updateMaplibreGeocoderCategoryFilter();
     this.updateMaplibreGeocoderCountryFilter();
-    this.updateMaplibreGeocoderBoundingBox([]);
+    this.updateMaplibreGeocoderBoundingBox(null);
     this.updateMaplibreGeocoderBiasPosition({});
   }
 }
@@ -216,7 +209,7 @@ export class AmazonLocationMaplibreGeocoder {
  * - required
  *
  * options
- * - PlacesGeocderOptions
+ * - PlacesGeocoderOptions
  * - Object of 4 booleans, enableAll, enable*Api to define which API's you would like enabled in the geocoder.
  * - Optional
  */
@@ -229,16 +222,16 @@ export function buildAmazonLocationMaplibreGeocoder(
 
   const omitSuggestionsWithoutPlaceId = options?.omitSuggestionsWithoutPlaceId || false;
 
-  const amazonLocationGeocoderApi: AmazonLocationGeocoderApi = {};
-
-  // maplibre-gl-geocoder always requires we have defined forwardGeocode.
-  amazonLocationGeocoderApi.forwardGeocode = createAmazonLocationForwardGeocodeApi(locationClient, indexName);
+  // maplibre-gl-geocoder always requires we have defined forwardGeocode and reverseGeocode
+  const amazonLocationGeocoderApi: MaplibreGeocoderApi = {
+    forwardGeocode: createAmazonLocationForwardGeocodeApi(locationClient, indexName),
+    reverseGeocode: createAmazonLocationReverseGeocodeApi(locationClient, indexName),
+  };
 
   let maplibreglgeocoderOptions = {};
 
   if (options) {
     if (options.enableAll) {
-      amazonLocationGeocoderApi.reverseGeocode = createAmazonLocationReverseGeocodeApi(locationClient, indexName);
       amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceById(locationClient, indexName);
       amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestions(
         locationClient,
@@ -251,14 +244,6 @@ export function buildAmazonLocationMaplibreGeocoder(
         showResultsWhileTyping: true,
       };
     } else {
-      if (options.enableReverseGeocode) {
-        amazonLocationGeocoderApi.reverseGeocode = createAmazonLocationReverseGeocodeApi(locationClient, indexName);
-        maplibreglgeocoderOptions = {
-          ...maplibreglgeocoderOptions,
-          reverseGeocode: true,
-        };
-      }
-
       if (options.enableSearchByPlaceId) {
         amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceById(locationClient, indexName);
       }

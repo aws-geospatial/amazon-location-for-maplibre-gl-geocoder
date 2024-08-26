@@ -336,16 +336,8 @@ export interface BoundingBox {
   latitudeNE: number;
 }
 
-export interface AmazonLocationGeocoderApi {
-  forwardGeocode?;
-  reverseGeocode?;
-  getSuggestions?;
-  searchByPlaceId?;
-}
-
 export interface PlacesGeocoderOptions {
   enableAll?: boolean;
-  enableReverseGeocode?: boolean;
   enableGetSuggestions?: boolean;
   enableSearchByPlaceId?: boolean;
   omitSuggestionsWithoutPlaceId?: boolean;
