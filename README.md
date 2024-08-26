@@ -125,7 +125,7 @@ npm run typedoc
 
 ### `buildAmazonLocationMaplibreGeocoder`
 
-Creates an instance of the AmazonLocationMaplibreGeocder which is the entry point to the other all other calls.
+Creates an instance of the AmazonLocationMaplibreGeocoder which is the entry point to the other all other calls.
 
 ```javascript
 const amazonLocationMaplibreGeocoder = buildAmazonLocationMaplibreGeocoder(client, placesIndex, { enableAll: true });
