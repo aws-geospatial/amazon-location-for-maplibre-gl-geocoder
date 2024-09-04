@@ -9,7 +9,11 @@ import {
   SearchPlaceIndexForSuggestionsCommandInput,
   SearchPlaceIndexForTextCommandInput,
 } from "@aws-sdk/client-location";
-import { default as MaplibreGeocoder, MaplibreGeocoderApi } from "@maplibre/maplibre-gl-geocoder";
+import {
+  default as MaplibreGeocoder,
+  MaplibreGeocoderApi,
+  MaplibreGeocoderFeatureResults,
+} from "@maplibre/maplibre-gl-geocoder";
 import maplibregl, { IControl } from "maplibre-gl";
 import { CategoriesEnum, CountriesEnum, BoundingBox, Position, PlacesGeocoderOptions } from "../common/types";
 
@@ -366,7 +370,7 @@ function createAmazonLocationForwardGeocodeApi(amazonLocationClient: LocationCli
     } catch (e) {
       console.error(`Failed to forwardGeocode with error: ${e}`);
     }
-    return { features: features };
+    return { features: features } as MaplibreGeocoderFeatureResults;
   };
 }
 
@@ -411,7 +415,7 @@ function createAmazonLocationReverseGeocodeApi(amazonLocationClient: LocationCli
     } catch (e) {
       console.error(`Failed to reverseGeocode with error: ${e}`);
     }
-    return { features: features };
+    return { features: features } as MaplibreGeocoderFeatureResults;
   };
 }
 
