@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <!-- MapLibre GL JS -->
+    <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@4"></script>
+    <link href="https://cdn.jsdelivr.net/npm/maplibre-gl@4/dist/maplibre-gl.css" rel="stylesheet" />
+
+    <!-- Import the Amazon Location For Maplibre Geocoder -->
+    <script src="https://cdn.jsdelivr.net/npm/@aws/amazon-location-for-maplibre-gl-geocoder@2"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/@aws/amazon-location-for-maplibre-gl-geocoder@2/dist/amazon-location-for-mlg-styles.css"
+      rel="stylesheet"
+    />
+
+    <!-- Import the Amazon GeoPlacesClient -->
+    <script src="https://cdn.jsdelivr.net/npm/@aws/amazon-location-client@1"></script>
+
+    <style>
+      body {
+        margin: 0;
+      }
+      #map {
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map" />
+
+    <script type="module">
+      // Create a simple map.
+      const apiKey = "<API Key>";
+      const region = "<Region>";
+      const styleName = "Standard"; // Standard, Monochrome, Hybrid, or Satellite
+      const map = new maplibregl.Map({
+        container: "map",
+        center: [-97.7457518, 30.268193],
+        zoom: 10,
+        style: `https://maps.geo.${region}.amazonaws.com/v2/styles/${styleName}/descriptor?key=${apiKey}`,
+      });
+
+      // Create an authentication helper instance using an API key and region
+      const authHelper = await amazonLocationClient.withAPIKey(apiKey, region);
+
+      // Create a GeoPlacesClient
+      const client = new amazonLocationClient.GeoPlacesClient(authHelper.getClientConfig());
+
+      // Initialize the AmazonLocationMaplibreGeocoder object
+      const amazonLocationMaplibreGeocoderObject = amazonLocationMaplibreGeocoder.buildAmazonLocationMaplibreGeocoder(
+        client,
+        { enableAll: true },
+      );
+
+      // Use the AmazonLocationWithMaplibreGeocoder object to add a geocoder to the map.
+      map.addControl(amazonLocationMaplibreGeocoderObject.getPlacesGeocoder());
+    </script>
+  </body>
+</html>
