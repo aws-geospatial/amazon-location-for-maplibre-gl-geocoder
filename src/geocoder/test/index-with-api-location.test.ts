@@ -5,60 +5,37 @@ import {
   SearchPlaceIndexForSuggestionsCommand,
   SearchPlaceIndexForTextCommand,
 } from "@aws-sdk/client-location";
-import { withAPIKey, withIdentityPoolId } from "@aws/amazon-location-utilities-auth-helper";
 import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
-import { AmazonLocationMaplibreGeocoder, buildAmazonLocationMaplibreGeocoder } from "./index";
-import { BoundingBox, CategoriesEnum, CountriesEnum, Position } from "../common/types";
+import { AmazonLocationMaplibreGeocoder, buildAmazonLocationMaplibreGeocoder } from "../index";
+import { BoundingBox, CategoriesEnum, CountriesEnum, Position } from "../../common/types";
 import {
   ATTEMPTING_TO_MANUALLY_CREATE_ERROR_MESSAGE,
   MAX_CATEGORY_FILTERS,
   MAX_COUNTRY_FILTERS,
-} from "../common/constants";
-
-export interface AmazonLocationMaplibreGeocoderParams {
-  mapName: string;
-  placesName: string;
-  region: string;
-  apiKey?: string;
-  identityPoolId?: string;
-}
+} from "../../common/constants";
 
 jest.spyOn(console, "warn").mockImplementation(() => {});
 jest.spyOn(console, "error").mockImplementation(() => {});
 
 jest.mock("@aws-sdk/client-location");
-jest.mock("@aws/amazon-location-utilities-auth-helper");
 jest.mock("@maplibre/maplibre-gl-geocoder");
 
 describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => {
   const PLACES_NAME = "places.name";
   const TEST_ERROR_MESSAGE = "This is a test error.";
 
-  let clientMock;
+  // @ts-expect-error Allow override of the mocked LocationClient.config so we can set the proper serviceId
+  LocationClient.prototype.config = {
+    serviceId: "Location",
+  };
+
+  let clientMock: LocationClient;
   beforeEach(() => {
     clientMock = new LocationClient();
     (SearchPlaceIndexForTextCommand as jest.Mock).mockClear();
     (SearchPlaceIndexForPositionCommand as jest.Mock).mockClear();
     (SearchPlaceIndexForSuggestionsCommand as jest.Mock).mockClear();
     (GetPlaceCommand as jest.Mock).mockClear();
-
-    (withAPIKey as jest.Mock).mockReturnValueOnce({
-      getLocationClientConfig: () => {
-        return {
-          signer: { someSigner: "signer" },
-          credentials: { someCredentials: "credentials" },
-        };
-      },
-    });
-
-    (withIdentityPoolId as jest.Mock).mockReturnValueOnce({
-      getLocationClientConfig: () => {
-        return {
-          signer: { someSigner: "signer" },
-          credentials: { someCredentials: "credentials" },
-        };
-      },
-    });
   });
 
   afterEach(() => {
@@ -74,7 +51,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   });
 
   it("apiGeocoder should be able to create an instance GIVEN valid config", () => {
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME);
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, { placesIndex: PLACES_NAME });
     expect(geocoder).toBeDefined();
   });
 
@@ -113,7 +90,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
         bbox: bbox ? bbox : [],
       };
 
-      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME);
+      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, { placesIndex: PLACES_NAME });
       jest.spyOn(LocationClient.prototype, "send").mockReturnValue({
         Results: [
           {
@@ -150,7 +127,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
       proximity: {},
       bbox: [],
     };
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME);
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, { placesIndex: PLACES_NAME });
     jest.spyOn(LocationClient.prototype, "send").mockImplementation(() => {
       throw new Error(TEST_ERROR_MESSAGE);
     });
@@ -173,7 +150,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
       bbox: [],
     };
 
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, { enableReverseGeocode: true });
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, { placesIndex: PLACES_NAME });
 
     jest.spyOn(LocationClient.prototype, "send").mockReturnValue({
       Results: [
@@ -211,7 +188,7 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
       bbox: [],
     };
 
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, { enableReverseGeocode: true });
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, { placesIndex: PLACES_NAME });
 
     jest.spyOn(LocationClient.prototype, "send").mockImplementation(() => {
       throw new Error(TEST_ERROR_MESSAGE);
@@ -259,8 +236,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
         bbox: bbox ? bbox : [],
       };
 
-      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
         enableGetSuggestions: true,
+        placesIndex: PLACES_NAME,
       });
 
       jest.spyOn(LocationClient.prototype, "send").mockReturnValue({
@@ -290,8 +268,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
       bbox: [],
     };
 
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableGetSuggestions: true,
+      placesIndex: PLACES_NAME,
     });
     jest.spyOn(LocationClient.prototype, "send").mockImplementation(() => {
       throw new Error(TEST_ERROR_MESSAGE);
@@ -311,8 +290,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
       language: "en",
     };
 
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableSearchByPlaceId: true,
+      placesIndex: PLACES_NAME,
     });
     jest.spyOn(LocationClient.prototype, "send").mockReturnValue({
       Place: {
@@ -339,8 +319,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
       language: "en",
     };
 
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableSearchByPlaceId: true,
+      placesIndex: PLACES_NAME,
     });
 
     jest.spyOn(LocationClient.prototype, "send").mockImplementation(() => {
@@ -385,8 +366,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   ])(
     "I expect that I can get an IControl, MaplibreGeocoder WHEN I call createAmazonLocationGeocoder and WHEN I provide valid credentials.",
     async (categories, countries, bbox, biasPosition) => {
-      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
         enableAll: true,
+        placesIndex: PLACES_NAME,
       });
 
       if (categories) {
@@ -440,8 +422,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   ])(
     "AmazonLocationMaplibreGeocoder should be able to add Category filters WHEN the number of filters is less than the max number of filters.",
     (filters: CategoriesEnum[], expected: CategoriesEnum[]) => {
-      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
         enableAll: true,
+        placesIndex: PLACES_NAME,
       });
       if (filters.length < MAX_CATEGORY_FILTERS) {
         expect(geocoder.setCategoryFilter(filters)).toStrictEqual(true);
@@ -466,8 +449,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   ])(
     "AmazonLocationMaplibreGeocoder should be able to add Category filters individually until there are too many.",
     async (filters: CategoriesEnum[], expected: CategoriesEnum[]) => {
-      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
         enableAll: true,
+        placesIndex: PLACES_NAME,
       });
       let count = 0;
       filters.forEach((filter) => {
@@ -483,8 +467,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   );
 
   it("AmazonLocationMaplibreGeocoder should be able to clear the category filters after setting filters.", () => {
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableAll: true,
+      placesIndex: PLACES_NAME,
     });
 
     // Add some filters.
@@ -513,8 +498,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   ])(
     "AmazonLocationMaplibreGeocoder should be able to add Country filters WHEN the number of filters is less than the max number of filters.",
     (filters: CountriesEnum[], expected: CountriesEnum[]) => {
-      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
         enableAll: true,
+        placesIndex: PLACES_NAME,
       });
       if (filters.length < MAX_COUNTRY_FILTERS) {
         expect(geocoder.setCountryFilter(filters)).toStrictEqual(true);
@@ -539,8 +525,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   ])(
     "AmazonLocationMaplibreGeocoder should be able to add Country filters one at a time WHILE the number of filters is less than the max number of filters.",
     (filters: CountriesEnum[], expected: CountriesEnum[]) => {
-      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
         enableAll: true,
+        placesIndex: PLACES_NAME,
       });
 
       let count = 0;
@@ -557,8 +544,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   );
 
   it("AmazonLocationMaplibreGeocoder should be able to clear the country filters after setting filters.", () => {
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableAll: true,
+      placesIndex: PLACES_NAME,
     });
 
     // Add some filters.
@@ -574,8 +562,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   });
 
   it("bias position and bounding box MUST be exclusive.", () => {
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableAll: true,
+      placesIndex: PLACES_NAME,
     });
 
     // Set up the bbox values and biasPosition values
@@ -623,8 +612,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   });
 
   it("Clear all filters MUST clear all filters.", () => {
-    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableAll: true,
+      placesIndex: PLACES_NAME,
     });
 
     // set up filter values.
@@ -665,8 +655,9 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
   });
 
   it("placeholder should be passed to MaplibreGeocoder when specified.", async () => {
-    buildAmazonLocationMaplibreGeocoder(clientMock, PLACES_NAME, {
+    buildAmazonLocationMaplibreGeocoder(clientMock, {
       placeholder: "Test Placeholder",
+      placesIndex: PLACES_NAME,
     });
 
     expect(MaplibreGeocoder).toHaveBeenCalledTimes(1);

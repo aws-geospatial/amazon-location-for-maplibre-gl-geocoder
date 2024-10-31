@@ -342,4 +342,5 @@ export interface PlacesGeocoderOptions {
   enableSearchByPlaceId?: boolean;
   omitSuggestionsWithoutPlaceId?: boolean;
   placeholder?: string;
+  placesIndex?: string;
 }
