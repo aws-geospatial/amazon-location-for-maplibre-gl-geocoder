@@ -16,7 +16,7 @@ import {
 import { PlacesGeocoderOptions } from "../../common/types";
 import { MaplibreGeocoderApi, MaplibreGeocoderFeatureResults } from "@maplibre/maplibre-gl-geocoder";
 
-export function getApiDefinitionsV2(
+export function getApiDefinitionsGeoPlaces(
   geoPlacesClient: GeoPlacesClient,
   options?: PlacesGeocoderOptions,
 ): MaplibreGeocoderApi {
@@ -24,26 +24,26 @@ export function getApiDefinitionsV2(
 
   // maplibre-gl-geocoder always requires we have defined forwardGeocode and reverseGeocode
   const amazonLocationGeocoderApi: MaplibreGeocoderApi = {
-    forwardGeocode: createAmazonLocationForwardGeocodeApiV2(placesClient),
-    reverseGeocode: createAmazonLocationReverseGeocodeApiV2(placesClient),
+    forwardGeocode: createAmazonLocationForwardGeocodeApiGeoPlaces(placesClient),
+    reverseGeocode: createAmazonLocationReverseGeocodeApiGeoPlaces(placesClient),
   };
 
   const omitSuggestionsWithoutPlaceId = options?.omitSuggestionsWithoutPlaceId || false;
 
   if (options) {
     if (options.enableAll) {
-      amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdV2(placesClient);
-      amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestionsV2(
+      amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdGeoPlaces(placesClient);
+      amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestionsGeoPlaces(
         placesClient,
         omitSuggestionsWithoutPlaceId,
       );
     } else {
       if (options.enableSearchByPlaceId) {
-        amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdV2(placesClient);
+        amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdGeoPlaces(placesClient);
       }
 
       if (options.enableGetSuggestions) {
-        amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestionsV2(
+        amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestionsGeoPlaces(
           placesClient,
           omitSuggestionsWithoutPlaceId,
         );
@@ -54,7 +54,7 @@ export function getApiDefinitionsV2(
   return amazonLocationGeocoderApi;
 }
 
-function createAmazonLocationForwardGeocodeApiV2(amazonLocationClient: GeoPlacesClient) {
+function createAmazonLocationForwardGeocodeApiGeoPlaces(amazonLocationClient: GeoPlacesClient) {
   return async function (config) {
     const features = [];
     try {
@@ -111,7 +111,7 @@ function createAmazonLocationForwardGeocodeApiV2(amazonLocationClient: GeoPlaces
   };
 }
 
-function createAmazonLocationReverseGeocodeApiV2(amazonLocationClient: GeoPlacesClient) {
+function createAmazonLocationReverseGeocodeApiGeoPlaces(amazonLocationClient: GeoPlacesClient) {
   return async function (config) {
     const features = [];
     try {
@@ -155,7 +155,7 @@ function createAmazonLocationReverseGeocodeApiV2(amazonLocationClient: GeoPlaces
   };
 }
 
-function createAmazonLocationSearchPlaceByIdV2(amazonLocationClient: GeoPlacesClient) {
+function createAmazonLocationSearchPlaceByIdGeoPlaces(amazonLocationClient: GeoPlacesClient) {
   return async function (config) {
     let feature;
     let result: GetPlaceCommandOutput;
@@ -189,7 +189,7 @@ function createAmazonLocationSearchPlaceByIdV2(amazonLocationClient: GeoPlacesCl
   };
 }
 
-function createAmazonLocationGetSuggestionsV2(
+function createAmazonLocationGetSuggestionsGeoPlaces(
   amazonLocationClient: GeoPlacesClient,
   omitSuggestionsWithoutPlaceId: boolean,
 ) {

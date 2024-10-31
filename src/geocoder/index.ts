@@ -14,8 +14,8 @@ import {
   MAX_COUNTRY_FILTERS,
   UNKNOWN_CLIENT_ERROR_MESSAGE,
 } from "../common/constants";
-import { getApiDefinitionsV2 } from "./utils/api-definitions-v2";
-import { getApiDefinitionsV1 } from "./utils/api-definitions-v1";
+import { getApiDefinitionsGeoPlaces } from "./utils/api-definitions-geoplaces";
+import { getApiDefinitionsLocation } from "./utils/api-definitions-location";
 
 export class AmazonLocationMaplibreGeocoder {
   // This is our MaplibreGeocoder instance which will manage the use of the API.
@@ -235,11 +235,11 @@ export function buildAmazonLocationMaplibreGeocoder(
   // check against instanceof GeoPlacesClient | LocationClient, it will fail to recognize
   // if the clients were imported separately in the browser.
   if (placesClient.config.serviceId == "Geo Places") {
-    maplibreApis = getApiDefinitionsV2(placesClient as GeoPlacesClient, options);
+    maplibreApis = getApiDefinitionsGeoPlaces(placesClient as GeoPlacesClient, options);
   } else if (placesClient.config.serviceId == "Location") {
     console.warn("We have an instance of LocationClient");
     if (options && options.placesIndex) {
-      maplibreApis = getApiDefinitionsV1(placesClient as LocationClient, options.placesIndex, options);
+      maplibreApis = getApiDefinitionsLocation(placesClient as LocationClient, options.placesIndex, options);
     } else {
       throw new Error(LOCATION_CLIENT_WITHOUT_PLACES_INDEX_ERROR_MESSAGE);
     }

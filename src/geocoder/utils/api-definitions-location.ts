@@ -12,7 +12,7 @@ import {
 import { MaplibreGeocoderApi, MaplibreGeocoderFeatureResults } from "@maplibre/maplibre-gl-geocoder";
 import { PlacesGeocoderOptions } from "../../common/types";
 
-export function getApiDefinitionsV1(
+export function getApiDefinitionsLocation(
   locationClient: LocationClient,
   placesIndex: string,
   options?: PlacesGeocoderOptions,
