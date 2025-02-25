@@ -32,7 +32,7 @@
   "dependencies": {
     "@aws-sdk/client-geo-places": "^3.683.0",
     "@aws-sdk/client-location": "^3.682.0",
-    "@maplibre/maplibre-gl-geocoder": "^1.7.0"
+    "@maplibre/maplibre-gl-geocoder": "^1.7.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",
