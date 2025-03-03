@@ -347,7 +347,6 @@ export interface PlacesGeocoderOptions {
   zoom?: number;
   trackProximity?: boolean;
   proximityMinZoom?: number;
-  showResultsWhileTyping?: boolean;
   minLength?: number;
   reverseGeocode?: boolean;
   limit?: number;

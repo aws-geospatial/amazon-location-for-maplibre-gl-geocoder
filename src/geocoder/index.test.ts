@@ -32,7 +32,6 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
           zoom: 14,
         },
         placeholder: "Search places...",
-        showResultsWhileTyping: true,
       };
 
       const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, options);
@@ -41,7 +40,6 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
       expect(geocoderOptions.flyTo.speed).toBe(1.2);
       expect(geocoderOptions.flyTo.zoom).toBe(14);
       expect(geocoderOptions.placeholder).toBe("Search places...");
-      expect(geocoderOptions.showResultsWhileTyping).toBe(true);
     });
   });
 

@@ -264,9 +264,6 @@ export function buildAmazonLocationMaplibreGeocoder(
       ...(options.zoom !== undefined ? { zoom: options.zoom } : {}),
       ...(options.trackProximity !== undefined ? { trackProximity: options.trackProximity } : {}),
       ...(options.proximityMinZoom !== undefined ? { proximityMinZoom: options.proximityMinZoom } : {}),
-      ...(options.showResultsWhileTyping !== undefined
-        ? { showResultsWhileTyping: options.showResultsWhileTyping }
-        : {}),
       ...(options.minLength !== undefined ? { minLength: options.minLength } : {}),
       ...(options.reverseGeocode !== undefined ? { reverseGeocode: options.reverseGeocode } : {}),
       ...(options.limit !== undefined ? { limit: options.limit } : {}),
