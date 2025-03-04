@@ -350,7 +350,6 @@ export interface PlacesGeocoderOptions {
   minLength?: number;
   reverseGeocode?: boolean;
   limit?: number;
-  enableEventLogging?: boolean;
   collapsed?: boolean;
   clearAndBlurOnEsc?: boolean;
   clearOnBlur?: boolean;
