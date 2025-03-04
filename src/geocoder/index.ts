@@ -255,19 +255,30 @@ export function buildAmazonLocationMaplibreGeocoder(
   };
 
   if (options) {
-    if (options.enableAll || options.enableGetSuggestions) {
-      maplibreglgeocoderOptions = {
-        ...maplibreglgeocoderOptions,
-        showResultsWhileTyping: true,
-      };
-    }
+    maplibreglgeocoderOptions = {
+      ...maplibreglgeocoderOptions,
+      ...(options.enableAll || options.enableGetSuggestions ? { showResultsWhileTyping: true } : {}),
+      ...(options.placeholder ? { placeholder: options.placeholder } : {}),
 
-    if (options.placeholder) {
-      maplibreglgeocoderOptions = {
-        ...maplibreglgeocoderOptions,
-        placeholder: options.placeholder,
-      };
-    }
+      ...(options.flyTo !== undefined ? { flyTo: options.flyTo } : {}),
+      ...(options.zoom !== undefined ? { zoom: options.zoom } : {}),
+      ...(options.trackProximity !== undefined ? { trackProximity: options.trackProximity } : {}),
+      ...(options.proximityMinZoom !== undefined ? { proximityMinZoom: options.proximityMinZoom } : {}),
+      ...(options.minLength !== undefined ? { minLength: options.minLength } : {}),
+      ...(options.reverseGeocode !== undefined ? { reverseGeocode: options.reverseGeocode } : {}),
+      ...(options.limit !== undefined ? { limit: options.limit } : {}),
+      ...(options.collapsed !== undefined ? { collapsed: options.collapsed } : {}),
+      ...(options.clearAndBlurOnEsc !== undefined ? { clearAndBlurOnEsc: options.clearAndBlurOnEsc } : {}),
+      ...(options.clearOnBlur !== undefined ? { clearOnBlur: options.clearOnBlur } : {}),
+      ...(options.localGeocoderOnly !== undefined ? { localGeocoderOnly: options.localGeocoderOnly } : {}),
+      ...(options.debounceSearch !== undefined ? { debounceSearch: options.debounceSearch } : {}),
+      ...(options.language !== undefined ? { language: options.language } : {}),
+      ...(options.reverseMode !== undefined ? { reverseMode: options.reverseMode } : {}),
+      ...(options.getItemValue ? { getItemValue: options.getItemValue } : {}),
+      ...(options.render ? { render: options.render } : {}),
+      ...(options.popupRender ? { popupRender: options.popupRender } : {}),
+      ...(options.filter ? { filter: options.filter } : {}),
+    };
   }
 
   const renderFunction = getRenderFunction();

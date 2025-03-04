@@ -343,4 +343,41 @@ export interface PlacesGeocoderOptions {
   omitSuggestionsWithoutPlaceId?: boolean;
   placeholder?: string;
   placesIndex?: string;
+  flyTo?: boolean | FlyToOptions;
+  zoom?: number;
+  trackProximity?: boolean;
+  proximityMinZoom?: number;
+  minLength?: number;
+  reverseGeocode?: boolean;
+  limit?: number;
+  enableEventLogging?: boolean;
+  collapsed?: boolean;
+  clearAndBlurOnEsc?: boolean;
+  clearOnBlur?: boolean;
+  localGeocoderOnly?: boolean;
+  debounceSearch?: number;
+  language?: string;
+  reverseMode?: "distance" | "score";
+  getItemValue?: (item: CarmenGeojsonFeature) => string;
+  render?: (item: CarmenGeojsonFeature) => string;
+  popupRender?: (item: CarmenGeojsonFeature) => string;
+  filter?: (item: CarmenGeojsonFeature) => boolean;
+}
+
+export interface FlyToOptions {
+  speed?: number;
+  zoom?: number;
+  curve?: number;
+  minZoom?: number;
+  screenSpeed?: number;
+  maxDuration?: number;
+}
+
+export interface CarmenGeojsonFeature {
+  bbox?: [number, number, number, number];
+  id: string;
+  language?: string;
+  place_name: string;
+  place_type: string[];
+  text: string;
 }
