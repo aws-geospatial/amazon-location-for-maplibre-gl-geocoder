@@ -1,3 +1,33 @@
+# 2.0.1
+### 🐞 Bug fixes
+
+- Fix flyTo not being honoured [#157](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/issues/157)
+- Fix Geocoding returns error 400 when zoom level < 9 [#158](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/issues/158)
+- Removed `enableEventLogging` from options
+
+### ✨ Features and improvements
+
+- Extended `options` to support `maplibre-gl-geocoder`'s MaplibreGeocoderOptions for:
+    - flyTo,
+    - zoom,
+    - trackProximity,
+    - proximityMinZoom,
+    - showResultsWhileTyping,
+    - minLength,
+    - reverseGeocode,
+    - limit,
+    - collapsed,
+    - clearAndBlurOnEsc,
+    - clearOnBlur,
+    - localGeocoderOnly,
+    - debounceSearch,
+    - language,
+    - reverseMode,
+    - getItemValue,
+    - render,
+    - popupRender,
+    - filter
+
 # 2.0.0
 
 ### ⚠️ Breaking changes
