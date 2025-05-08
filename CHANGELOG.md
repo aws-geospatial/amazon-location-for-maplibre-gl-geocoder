@@ -1,3 +1,8 @@
+# 2.0.2
+### ✨ Features and improvements
+- Added support for `AutocompleteCommand` [#193](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/193)
+- Several dependency version updates
+
 # 2.0.1
 ### 🐞 Bug fixes
 
