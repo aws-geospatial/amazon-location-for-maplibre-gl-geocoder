@@ -4,6 +4,7 @@ import {
   SearchTextCommand,
   ReverseGeocodeCommand,
   SuggestCommand,
+  AutocompleteCommand,
 } from "@aws-sdk/client-geo-places";
 import MaplibreGeocoder from "@maplibre/maplibre-gl-geocoder";
 import { buildAmazonLocationMaplibreGeocoder } from "../index";
@@ -228,11 +229,44 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
 
       const response = await geocoder.amazonLocationApi.getSuggestions(config);
 
-      expect(clientMock.send).toHaveBeenCalled();
+      expect(clientMock.send).toHaveBeenCalledWith(expect.any(SuggestCommand));
       expect(response.suggestions).toBeDefined();
       expect(response.suggestions[0].placeId).toEqual("AUS 16");
     },
   );
+
+  it("getSuggestions should send Autocomplete command when omitSuggestionsWithoutPlaceId is true", async () => {
+    const config = {
+      query: "a map query",
+      language: "en",
+      countries: "",
+      proximity: {},
+      bbox: [],
+    };
+
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
+      enableGetSuggestions: true,
+      omitSuggestionsWithoutPlaceId: true,
+    });
+    jest.spyOn(GeoPlacesClient.prototype, "send").mockReturnValue({
+      ResultItems: [
+        {
+          Title: "Cool Suggested Location",
+          Address: {
+            Label: "123 Cool Place Way",
+          },
+          PlaceId: "AUS 16",
+        },
+      ],
+    });
+
+    const response = await geocoder.amazonLocationApi.getSuggestions(config);
+
+    expect(clientMock.send).toHaveBeenCalledWith(expect.any(AutocompleteCommand));
+    expect(response.suggestions).toBeDefined();
+    expect(response.suggestions[0].placeId).toEqual("AUS 16");
+    expect(response.suggestions[0].text).toEqual("123 Cool Place Way");
+  });
 
   it("getSuggestions throws error when error is encountered", async () => {
     const config = {
@@ -245,6 +279,31 @@ describe("Creates APIs for Maplibre Geocoder using Amazon Location APIs", () => 
 
     const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
       enableGetSuggestions: true,
+    });
+    jest.spyOn(GeoPlacesClient.prototype, "send").mockImplementation(() => {
+      throw new Error(TEST_ERROR_MESSAGE);
+    });
+
+    try {
+      await geocoder.amazonLocationApi.getSuggestions(config);
+    } catch (e) {
+      expect(e.message).toEqual(TEST_ERROR_MESSAGE);
+    }
+    expect(clientMock.send).toHaveBeenCalled();
+  });
+
+  it("getSuggestions with AutocompleteCommand throws error when error is encountered", async () => {
+    const config = {
+      query: "a map query",
+      language: "en",
+      countries: "",
+      proximity: {},
+      bbox: [],
+    };
+
+    const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
+      enableGetSuggestions: true,
+      omitSuggestionsWithoutPlaceId: true,
     });
     jest.spyOn(GeoPlacesClient.prototype, "send").mockImplementation(() => {
       throw new Error(TEST_ERROR_MESSAGE);

@@ -1,13 +1,18 @@
 import {
   GeoPlacesClient,
+  AutocompleteCommand,
   SearchTextCommand,
   ReverseGeocodeCommand,
   SuggestCommand,
   GetPlaceCommand,
+  AutocompleteCommandInput,
+  AutocompleteAdditionalFeature,
   SearchTextCommandInput,
   ReverseGeocodeCommandInput,
   SuggestCommandInput,
+  SuggestAdditionalFeature,
   GetPlaceCommandInput,
+  AutocompleteCommandOutput,
   GetPlaceCommandOutput,
   SuggestCommandOutput,
   SearchTextCommandOutput,
@@ -189,10 +194,7 @@ function createAmazonLocationSearchPlaceByIdGeoPlaces(amazonLocationClient: GeoP
   };
 }
 
-function createAmazonLocationGetSuggestionsGeoPlaces(
-  amazonLocationClient: GeoPlacesClient,
-  omitSuggestionsWithoutPlaceId: boolean,
-) {
+function createAmazonLocationSuggestCommand(amazonLocationClient: GeoPlacesClient) {
   return async function (config) {
     const suggestions = [];
     try {
@@ -200,6 +202,7 @@ function createAmazonLocationGetSuggestionsGeoPlaces(
         QueryText: config.query,
         BiasPosition: config.proximity ? config.proximity : undefined,
         Language: config.language[0],
+        AdditionalFeatures: [SuggestAdditionalFeature.CORE],
       };
 
       const command = new SuggestCommand(suggestParams);
@@ -207,12 +210,8 @@ function createAmazonLocationGetSuggestionsGeoPlaces(
 
       if (results.ResultItems) {
         for (const result of results.ResultItems) {
-          // Skip Query suggestions, since they don't have a PlaceId
-          if (omitSuggestionsWithoutPlaceId && result.Query) {
-            continue;
-          }
           const suggestionWithPlace = {
-            text: result.Title,
+            text: result.Query ? result.Title : result.Place.Address?.Label,
             placeId: result.Place?.PlaceId || null,
           };
           suggestions.push(suggestionWithPlace);
@@ -226,4 +225,48 @@ function createAmazonLocationGetSuggestionsGeoPlaces(
       suggestions: suggestions,
     };
   };
+}
+
+function createAmazonLocationAutocompleteCommand(amazonLocationClient: GeoPlacesClient) {
+  return async function (config) {
+    const suggestions = [];
+    try {
+      const suggestParams: AutocompleteCommandInput = {
+        QueryText: config.query,
+        BiasPosition: config.proximity ? config.proximity : undefined,
+        Language: config.language[0],
+        AdditionalFeatures: [AutocompleteAdditionalFeature.CORE],
+      };
+
+      const command = new AutocompleteCommand(suggestParams);
+      const results: AutocompleteCommandOutput = await amazonLocationClient.send(command);
+
+      if (results.ResultItems) {
+        for (const result of results.ResultItems) {
+          const suggestionWithPlace = {
+            text: result.Address?.Label,
+            placeId: result.PlaceId,
+          };
+          suggestions.push(suggestionWithPlace);
+        }
+      }
+    } catch (e) {
+      console.error(`Failed to getSuggestions with error: ${e}`);
+    }
+
+    return {
+      suggestions: suggestions,
+    };
+  };
+}
+
+function createAmazonLocationGetSuggestionsGeoPlaces(
+  amazonLocationClient: GeoPlacesClient,
+  omitSuggestionsWithoutPlaceId: boolean,
+) {
+  // If the user wants to omit suggestions without a PlaceId, then use
+  // the Autocomplete API instead of Suggest, since Suggest includes query text results
+  return omitSuggestionsWithoutPlaceId
+    ? createAmazonLocationAutocompleteCommand(amazonLocationClient)
+    : createAmazonLocationSuggestCommand(amazonLocationClient);
 }
