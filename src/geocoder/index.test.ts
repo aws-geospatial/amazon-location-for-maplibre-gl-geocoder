@@ -1,12 +1,18 @@
 import { buildAmazonLocationMaplibreGeocoder } from "./index";
 import { LocationClient } from "@aws-sdk/client-location";
+import { GeoPlacesClient } from "@aws-sdk/client-geo-places";
+
+// Spy on console.warn so we can verify it gets called in warning cases
+jest.spyOn(console, "warn").mockImplementation(() => {});
 
 describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
   const PLACES_NAME = "places.name";
   let clientMock: LocationClient;
+  let geoPlacesClientMock: GeoPlacesClient;
 
   beforeEach(() => {
     clientMock = new LocationClient({});
+    geoPlacesClientMock = new GeoPlacesClient({});
   });
 
   afterEach(() => {
@@ -20,6 +26,7 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
       });
 
       expect(geocoder).toBeDefined();
+      expect(console.warn).toHaveBeenCalledTimes(1);
       // Verify default options are set
       expect(geocoder.getPlacesGeocoder().options.reverseGeocode).toBe(true);
     });
@@ -37,9 +44,40 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
       const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, options);
       const geocoderOptions = geocoder.getPlacesGeocoder().options;
 
+      expect(console.warn).toHaveBeenCalledTimes(1);
       expect(geocoderOptions.flyTo.speed).toBe(1.2);
       expect(geocoderOptions.flyTo.zoom).toBe(14);
       expect(geocoderOptions.placeholder).toBe("Search places...");
+    });
+
+    it("should initialize with GeoPlaces client with default options", () => {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(geoPlacesClientMock);
+
+      expect(geocoder).toBeDefined();
+
+      // LocationClient warning won't be called since we initialized with a GeoPlacesClient
+      expect(console.warn).toHaveBeenCalledTimes(0);
+
+      // Verify default options are set
+      expect(geocoder.getPlacesGeocoder().options.reverseGeocode).toBe(true);
+    });
+
+    it("should initialize with GeoPlaces client with enableAll", () => {
+      const geocoder = buildAmazonLocationMaplibreGeocoder(geoPlacesClientMock, {
+        enableAll: true,
+      });
+
+      expect(geocoder).toBeDefined();
+
+      // LocationClient warning won't be called since we initialized with a GeoPlacesClient
+      expect(console.warn).toHaveBeenCalledTimes(0);
+
+      // Verify all options are set
+      expect(geocoder.getPlacesGeocoder().options.reverseGeocode).toBe(true);
+      expect(geocoder.amazonLocationApi.forwardGeocode).toBeDefined();
+      expect(geocoder.amazonLocationApi.reverseGeocode).toBeDefined();
+      expect(geocoder.amazonLocationApi.getSuggestions).toBeDefined();
+      expect(geocoder.amazonLocationApi.searchByPlaceId).toBeDefined();
     });
   });
 
@@ -52,6 +90,8 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
         proximityMinZoom: undefined,
       });
 
+      expect(console.warn).toHaveBeenCalledTimes(1);
+
       const geocoderOptions = geocoder.getPlacesGeocoder().options;
       expect(geocoderOptions.flyTo).toBe(true);
       expect(geocoderOptions.proximityMinZoom).toBe(9);
@@ -62,6 +102,8 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
       const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, {
         placesIndex: PLACES_NAME,
       });
+
+      expect(console.warn).toHaveBeenCalledTimes(1);
 
       const geocoderOptions = geocoder.getPlacesGeocoder().options;
       expect(geocoderOptions.reverseGeocode).toBe(true);
@@ -77,6 +119,8 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
         enableAll: true,
       });
 
+      expect(console.warn).toHaveBeenCalledTimes(1);
+
       const geocoderOptions = geocoder.getPlacesGeocoder().options;
       expect(geocoderOptions.showResultsWhileTyping).toBe(true);
     });
@@ -87,6 +131,8 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
         enableGetSuggestions: true,
         enableSearchByPlaceId: false,
       });
+
+      expect(console.warn).toHaveBeenCalledTimes(1);
 
       const geocoderOptions = geocoder.getPlacesGeocoder().options;
       expect(geocoderOptions.showResultsWhileTyping).toBe(true);
@@ -108,6 +154,7 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
       const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, options);
       const geocoderOptions = geocoder.getPlacesGeocoder().options;
 
+      expect(console.warn).toHaveBeenCalledTimes(1);
       expect(geocoderOptions.zoom).toBe(10);
       expect(geocoderOptions.trackProximity).toBe(true);
       expect(geocoderOptions.minLength).toBe(3);
@@ -126,6 +173,7 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
       const geocoder = buildAmazonLocationMaplibreGeocoder(clientMock, options);
       const geocoderOptions = geocoder.getPlacesGeocoder().options;
 
+      expect(console.warn).toHaveBeenCalledTimes(1);
       expect(geocoderOptions.language).toBe("fr");
       expect(geocoderOptions.reverseMode).toBe("distance");
     });
@@ -140,6 +188,7 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
         render: customRender,
       });
 
+      expect(console.warn).toHaveBeenCalledTimes(1);
       expect(geocoder.getPlacesGeocoder().options.render).toBeDefined();
     });
 
@@ -151,6 +200,7 @@ describe("AmazonLocationMaplibreGeocoder Index Tests", () => {
         popupRender: customPopupRender,
       });
 
+      expect(console.warn).toHaveBeenCalledTimes(1);
       expect(geocoder.getPlacesGeocoder().options.popupRender).toBeDefined();
     });
   });
