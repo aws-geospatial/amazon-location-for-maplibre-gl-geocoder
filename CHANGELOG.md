@@ -1,3 +1,8 @@
+# 2.0.3
+### ✨ Features and improvements
+- Added support for specifying `AdditionalFeatures` to expand response fields [#197](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/197)
+- Several dependency version updates
+
 # 2.0.2
 ### ✨ Features and improvements
 - Added support for `AutocompleteCommand` [#193](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/193)
