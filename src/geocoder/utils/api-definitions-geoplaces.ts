@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 import {
   GeoPlacesClient,
   AutocompleteCommand,
@@ -8,10 +11,13 @@ import {
   AutocompleteCommandInput,
   AutocompleteAdditionalFeature,
   SearchTextCommandInput,
+  SearchTextAdditionalFeature,
   ReverseGeocodeCommandInput,
+  ReverseGeocodeAdditionalFeature,
   SuggestCommandInput,
   SuggestAdditionalFeature,
   GetPlaceCommandInput,
+  GetPlaceAdditionalFeature,
   AutocompleteCommandOutput,
   GetPlaceCommandOutput,
   SuggestCommandOutput,
@@ -29,22 +35,34 @@ export function getApiDefinitionsGeoPlaces(
 
   // maplibre-gl-geocoder always requires we have defined forwardGeocode and reverseGeocode
   const amazonLocationGeocoderApi: MaplibreGeocoderApi = {
-    forwardGeocode: createAmazonLocationForwardGeocodeApiGeoPlaces(placesClient),
-    reverseGeocode: createAmazonLocationReverseGeocodeApiGeoPlaces(placesClient),
+    forwardGeocode: createAmazonLocationForwardGeocodeApiGeoPlaces(
+      placesClient,
+      options?.forwardGeocodeAdditionalFeatures,
+    ),
+    reverseGeocode: createAmazonLocationReverseGeocodeApiGeoPlaces(
+      placesClient,
+      options?.reverseGeocodeAdditionalFeatures,
+    ),
   };
 
   const omitSuggestionsWithoutPlaceId = options?.omitSuggestionsWithoutPlaceId || false;
 
   if (options) {
     if (options.enableAll) {
-      amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdGeoPlaces(placesClient);
+      amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdGeoPlaces(
+        placesClient,
+        options?.searchByPlaceIdAdditionalFeatures,
+      );
       amazonLocationGeocoderApi.getSuggestions = createAmazonLocationGetSuggestionsGeoPlaces(
         placesClient,
         omitSuggestionsWithoutPlaceId,
       );
     } else {
       if (options.enableSearchByPlaceId) {
-        amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdGeoPlaces(placesClient);
+        amazonLocationGeocoderApi.searchByPlaceId = createAmazonLocationSearchPlaceByIdGeoPlaces(
+          placesClient,
+          options?.searchByPlaceIdAdditionalFeatures,
+        );
       }
 
       if (options.enableGetSuggestions) {
@@ -59,7 +77,10 @@ export function getApiDefinitionsGeoPlaces(
   return amazonLocationGeocoderApi;
 }
 
-function createAmazonLocationForwardGeocodeApiGeoPlaces(amazonLocationClient: GeoPlacesClient) {
+function createAmazonLocationForwardGeocodeApiGeoPlaces(
+  amazonLocationClient: GeoPlacesClient,
+  additionalFeatures?: SearchTextAdditionalFeature[],
+) {
   return async function (config) {
     const features = [];
     try {
@@ -72,6 +93,10 @@ function createAmazonLocationForwardGeocodeApiGeoPlaces(amazonLocationClient: Ge
           IncludeCountries: config.filterCountries ? config.filterCountries : undefined,
         },
         Language: config.language[0],
+        AdditionalFeatures: additionalFeatures || [
+          SearchTextAdditionalFeature.CONTACT,
+          SearchTextAdditionalFeature.TIME_ZONE,
+        ],
       };
 
       // Countries are stored as a comma seperated string in Maplibre-gl-geocoder
@@ -116,7 +141,10 @@ function createAmazonLocationForwardGeocodeApiGeoPlaces(amazonLocationClient: Ge
   };
 }
 
-function createAmazonLocationReverseGeocodeApiGeoPlaces(amazonLocationClient: GeoPlacesClient) {
+function createAmazonLocationReverseGeocodeApiGeoPlaces(
+  amazonLocationClient: GeoPlacesClient,
+  additionalFeatures?: ReverseGeocodeAdditionalFeature[],
+) {
   return async function (config) {
     const features = [];
     try {
@@ -124,6 +152,7 @@ function createAmazonLocationReverseGeocodeApiGeoPlaces(amazonLocationClient: Ge
         QueryPosition: config.query,
         Language: config.language ? config.language : undefined,
         MaxResults: config.limit ? config.limit : undefined,
+        AdditionalFeatures: additionalFeatures || [ReverseGeocodeAdditionalFeature.TIME_ZONE],
       };
 
       const command = new ReverseGeocodeCommand(reverseGeocodeParams);
@@ -160,7 +189,10 @@ function createAmazonLocationReverseGeocodeApiGeoPlaces(amazonLocationClient: Ge
   };
 }
 
-function createAmazonLocationSearchPlaceByIdGeoPlaces(amazonLocationClient: GeoPlacesClient) {
+function createAmazonLocationSearchPlaceByIdGeoPlaces(
+  amazonLocationClient: GeoPlacesClient,
+  additionalFeatures?: GetPlaceAdditionalFeature[],
+) {
   return async function (config) {
     let feature;
     let result: GetPlaceCommandOutput;
@@ -169,6 +201,10 @@ function createAmazonLocationSearchPlaceByIdGeoPlaces(amazonLocationClient: GeoP
       if (config.query) {
         const input: GetPlaceCommandInput = {
           PlaceId: config.query,
+          AdditionalFeatures: additionalFeatures || [
+            GetPlaceAdditionalFeature.CONTACT,
+            GetPlaceAdditionalFeature.TIME_ZONE,
+          ],
         };
         const command: GetPlaceCommand = new GetPlaceCommand(input);
         result = await amazonLocationClient.send(command);

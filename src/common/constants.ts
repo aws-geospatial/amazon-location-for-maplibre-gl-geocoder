@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 export const MAX_CATEGORY_FILTERS = 10;
 export const MAX_COUNTRY_FILTERS = 100;
 
