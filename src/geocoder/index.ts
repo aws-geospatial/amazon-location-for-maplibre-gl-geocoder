@@ -1,3 +1,6 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
 import { GeoPlacesClient } from "@aws-sdk/client-geo-places";
 
 import { LocationClient } from "@aws-sdk/client-location";

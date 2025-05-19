@@ -1,3 +1,12 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: Apache-2.0
+
+import {
+  GetPlaceAdditionalFeature,
+  ReverseGeocodeAdditionalFeature,
+  SearchTextAdditionalFeature,
+} from "@aws-sdk/client-geo-places";
+
 export enum PlaceTypes {
   AddressType = "AddressType",
   StreetType = "StreetType",
@@ -341,6 +350,9 @@ export interface PlacesGeocoderOptions {
   enableGetSuggestions?: boolean;
   enableSearchByPlaceId?: boolean;
   omitSuggestionsWithoutPlaceId?: boolean;
+  searchByPlaceIdAdditionalFeatures?: GetPlaceAdditionalFeature[];
+  reverseGeocodeAdditionalFeatures?: ReverseGeocodeAdditionalFeature[];
+  forwardGeocodeAdditionalFeatures?: SearchTextAdditionalFeature[];
   placeholder?: string;
   placesIndex?: string;
   flyTo?: boolean | FlyToOptions;
