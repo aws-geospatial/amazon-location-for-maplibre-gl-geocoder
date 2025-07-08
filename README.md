@@ -55,7 +55,7 @@ const map = new maplibregl.Map({
   container: "map",
   center: [-123.115898, 49.295868],
   zoom: 10,
-  style: `https://maps.geo.${region}.amazonaws.com/maps/v2/styles/${mapStyle}/descriptor?key=${apiKey}`,
+  style: `https://maps.geo.${region}.amazonaws.com/v2/styles/${mapStyle}/descriptor?key=${apiKey}`,
 });
 
 // Gets an instance of the AmazonLocationMaplibreGeocoder Object.
@@ -99,7 +99,7 @@ const map = new maplibregl.Map({
   container: "map",
   center: [-123.115898, 49.295868],
   zoom: 10,
-  style: `https://maps.geo.${region}.amazonaws.com/maps/v2/styles/${mapStyle}/descriptor?key=${apiKey}`,
+  style: `https://maps.geo.${region}.amazonaws.com/v2/styles/${mapStyle}/descriptor?key=${apiKey}`,
 });
 
 // Initialize the AmazonLocationMaplibreGeocoder object
