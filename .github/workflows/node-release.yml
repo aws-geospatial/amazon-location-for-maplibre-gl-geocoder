@@ -1,120 +1,13 @@
+name: Release Package
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
 jobs:
-  release-check:
-    name: Check if version is published
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Check if version is published
-        id: check
-        run: |
-          currentVersion="$( node -e "console.log(require('./package.json').version)" )"
-          previousVersion="$(npm view @aws/amazon-location-for-maplibre-gl-geocoder version)" 
-          isPublished="$( npm view @aws/amazon-location-for-maplibre-gl-geocoder --json | jq -c --arg cv "$currentVersion" 'any(. == $cv)')"
-          echo "published=$isPublished" >> "$GITHUB_OUTPUT"
-          echo "previous-version=$previousVersion" >> "$GITHUB_OUTPUT"
-          echo "current-version=$currentVersion" >> "$GITHUB_OUTPUT"
-    outputs:
-      published: ${{ steps.check.outputs.published }}
-      previous-version: ${{ steps.check.outputs.previous-version }}
-      current-version: ${{ steps.check.outputs.current-version }}
-
-
-  release_to_github:
-    needs: release-check
-    if: ${{ needs.release-check.outputs.published == 'false' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-      - name: Install dependencies
-        run: npm ci
-      - name: PrePublish
-        run: npm run prepublishOnly
-      - uses: montudor/action-zip@v1
-        with:
-          args: zip -qq -r dist.zip dist
-      - name: Extract changelog for version
-        run: |
-          awk '/# ${{needs.release-check.outputs.current-version }}/{f=1;next}/# ${{needs.release-check.outputs.previous-version}}/{f=0} f' CHANGELOG.md > changelog_for_version.md
-          cat changelog_for_version.md
-
-      - name: Update Release Notes
-        id: update_release_notes
-        uses: ncipollo/release-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag: v${{ needs.release-check.outputs.current-version }}
-          name: v${{ needs.release-check.outputs.current-version  }}
-          bodyFile: changelog_for_version.md
-          artifacts: "dist.zip"
-          allowUpdates: true
-          draft: false
-          prerelease: false
-
-  publish_npm:
-    needs: release_to_github
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Get version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@v1.3.1
-
-      - name: Prepare release
-        id: prepare_release
-        run: |
-          RELEASE_TYPE="$(node -e "console.log(require('semver').prerelease('${{ steps.package-version.outputs.current-version }}') ? 'prerelease' : 'regular')")"
-          if [[ $RELEASE_TYPE == 'regular' ]]; then
-            echo "prerelease=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "prerelease=true" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Publish to NPM (release)
-        if: ${{ steps.prepare_release.outputs.prerelease == 'false'}}
-        run: |
-          echo "dist file does exist"
-          npm config set //registry.npmjs.org/:_authToken "${NPM_TOKEN}"
-          npm publish --access public
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
-      - name: Publish to NPM (prerelease)
-        if: ${{ steps.prepare_release.outputs.prerelease == 'true'}}
-        run: |
-          npm config set //registry.npmjs.org/:_authToken "${NPM_TOKEN}"
-          npm publish --tag next --access public
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
+  release:
+    uses: aws-geospatial/github-workflows-for-amazon-location/.github/workflows/node-release.yml@main
+    secrets:
+      NPM_ORG_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
+      
