@@ -7,6 +7,9 @@ on:
 
 jobs:
   release:
+    permissions:
+      contents: read
+      packages: write # for publishing package to github
     uses: aws-geospatial/github-workflows-for-amazon-location/.github/workflows/node-release.yml@main
     secrets:
       NPM_ORG_TOKEN: ${{ secrets.NPM_ORG_TOKEN }}
