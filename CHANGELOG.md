@@ -1,6 +1,7 @@
 # 2.0.4
 ### ✨ Features and improvements
-- Changed workflow to use common release file from [#217](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/217), which would automate the github and node release process.
+- Updated README file to fix example code map style URL's [#207](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/207/)
+- Several dependency version updates
 
 
 # 2.0.3
