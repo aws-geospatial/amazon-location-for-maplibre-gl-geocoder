@@ -1,3 +1,8 @@
+# 2.0.4
+### ✨ Features and improvements
+- Changed workflow to use common release file from [#217](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/217), which would automate the github and node release process.
+
+
 # 2.0.3
 ### ✨ Features and improvements
 - Added support for specifying `AdditionalFeatures` to expand response fields [#197](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/197)
