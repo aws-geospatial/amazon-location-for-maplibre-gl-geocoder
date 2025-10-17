@@ -10,5 +10,6 @@ jobs:
     permissions:
       contents: write # for publishing release to GitHub
       packages: write # for publishing package to NPM
+      id-token: write # for trusted publishing (OIDC)
     uses: aws-geospatial/github-workflows-for-amazon-location/.github/workflows/node-release.yml@main
   
