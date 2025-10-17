@@ -1,3 +1,8 @@
+# 2.0.5
+### ✨ Features and improvements
+- Several dependency version updates
+
+
 # 2.0.4
 ### ✨ Features and improvements
 - Updated README file to fix example code map style URL's [#207](https://github.com/aws-geospatial/amazon-location-for-maplibre-gl-geocoder/pull/207/)
