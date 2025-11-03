@@ -44,7 +44,7 @@
     "@babel/preset-typescript": "^7.26.0",
     "@jest/types": "^30.0.1",
     "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-commonjs": "^29.0.0",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@types/jest": "^30.0.0",
