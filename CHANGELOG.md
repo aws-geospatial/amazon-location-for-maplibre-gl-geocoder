@@ -1,3 +1,17 @@
+# 2.0.6
+### ✨ Features and improvements
+- Dependency version updates:
+  `@aws-sdk/client-geo-places`, `@aws-sdk/client-location`, `@aws-sdk/xml-builder`,
+  `@babel/core`, `@babel/preset-env`, `@babel/preset-typescript`,
+  `@eslint/js`, `@jest/types`, `@maplibre/maplibre-gl-geocoder`,
+  `@rollup/plugin-babel`, `@rollup/plugin-commonjs`,
+  `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser`,
+  `ajv`, `brace-expansion`, `diff`, `eslint`, `fast-xml-parser`, `flatted`,
+  `glob`, `globals`, `handlebars`, `jest`, `js-yaml`, `lint-staged`,
+  `markdown-it`, `minimatch`, `picomatch`, `prettier`, `prettier-plugin-jsdoc`,
+  `protocol-buffers-schema`, `rollup`, `ts-jest`, `typedoc`, `yaml`
+
+
 # 2.0.5
 ### ✨ Features and improvements
 - Several dependency version updates
