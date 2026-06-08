@@ -34,8 +34,8 @@
     "prepublishOnly": "npm-run-all build clean lint prettier prettier:check test build build:bundle"
   },
   "dependencies": {
-    "@aws-sdk/client-geo-places": "^3.683.0",
-    "@aws-sdk/client-location": "^3.682.0",
+    "@aws-sdk/client-geo-places": "^3.1063.0",
+    "@aws-sdk/client-location": "^3.1063.0",
     "@maplibre/maplibre-gl-geocoder": "^1.7.1"
   },
   "devDependencies": {
