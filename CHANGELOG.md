@@ -1,3 +1,9 @@
+# 2.0.7
+### ✨ Features and improvements
+- Dependency version updates:
+  `@aws-sdk/client-geo-places`, `@aws-sdk/client-location`, `brace-expansion`, `fast-xml-builder`
+
+
 # 2.0.6
 ### ✨ Features and improvements
 - Dependency version updates:
