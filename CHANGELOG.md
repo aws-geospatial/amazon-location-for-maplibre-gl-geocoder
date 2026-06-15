@@ -1,3 +1,11 @@
+# 2.0.8
+
+### ✨ Features and improvements
+
+- Several dependency version updates
+
+- Bump shell-quote from 1.8.1 to 1.8.4
+
 # 2.0.7
 ### ✨ Features and improvements
 - Dependency version updates:
