@@ -7,7 +7,8 @@ import { LocationClient } from "@aws-sdk/client-location";
 
 import { default as MaplibreGeocoder, MaplibreGeocoderApi } from "@maplibre/maplibre-gl-geocoder";
 
-import maplibregl, { IControl } from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
+import type { IControl } from "maplibre-gl";
 import { CategoriesEnum, CountriesEnum, BoundingBox, Position, PlacesGeocoderOptions } from "../common/types";
 
 import {
@@ -45,8 +46,10 @@ export class AmazonLocationMaplibreGeocoder {
       // For example, maplibregl.LngLatBounds will have a different signature between the two maplibre's, so its internal
       // logic for converting a LngLatBounds will fail an explicit instance type check.
       let maplibre = maplibregl;
-      if (typeof window == "object" && window.maplibregl) {
-        maplibre = window.maplibregl;
+      // Pages that load MapLibre with a <script> tag expose it as `window.maplibregl`, which its types do not declare.
+      const browserWindow = typeof window == "object" ? (window as Window & { maplibregl?: typeof maplibregl }) : null;
+      if (browserWindow && browserWindow.maplibregl) {
+        maplibre = browserWindow.maplibregl;
       }
 
       this.maplibreGeocoder = new MaplibreGeocoder(this.amazonLocationApi, {

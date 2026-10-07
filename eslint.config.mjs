@@ -12,6 +12,16 @@ export default [
   },
   eslint.configs.recommended,
   {
+    // Jest transform helpers run as CommonJS in Node
+    files: ["**/*.cjs"],
+    languageOptions: {
+      sourceType: "commonjs",
+      globals: {
+        ...globals.node,
+      },
+    },
+  },
+  {
     files: ["**/*.ts"],
     languageOptions: {
       parser: tsparser,

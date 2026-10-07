@@ -4,7 +4,8 @@
     "moduleResolution": "node",
     "outDir": "dist",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
   "typedocOptions": {
     "entryPoints": ["./src/index.ts"]
